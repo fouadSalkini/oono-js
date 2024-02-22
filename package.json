@@ -1,6 +1,6 @@
 {
   "name": "@wecansync/oono-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "oono javascript library",
   "main": "oono.js",
   "scripts": {

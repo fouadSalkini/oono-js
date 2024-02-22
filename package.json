@@ -10,8 +10,8 @@
     "type": "git",
     "url": "git+https://github.com/fouadSalkini/oono-js.git"
   },
-  "author": "wecansync",
-  "license": "ISC",
+  "author": "fouadsalkini",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/fouadSalkini/oono-js/issues"
   },

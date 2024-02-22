@@ -1,0 +1,19 @@
+{
+  "name": "@wecansync/oono-js",
+  "version": "1.0.0",
+  "description": "oono javascript library",
+  "main": "oono.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fouadSalkini/oono-js.git"
+  },
+  "author": "wecansync",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fouadSalkini/oono-js/issues"
+  },
+  "homepage": "https://github.com/fouadSalkini/oono-js#readme"
+}

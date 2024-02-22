@@ -17,8 +17,8 @@
     "tenantId": "",
     "activeStoriesCount": ""
  },
- widgetWidth = "64px",
- widgetHeight = "64px",
+ widgetWidth = "66px",
+ widgetHeight = "66px",
  logoMaxWidth = "200px"
  ;
 

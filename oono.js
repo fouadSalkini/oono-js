@@ -121,7 +121,7 @@
         if (ctx.iframeStoriesDiv) {
           ctx.container.style.opacity = "0.5";
             ctx.openWindow = true;
-            if (ctx.iframeLoaded) {
+            if (ctx.iframeLoaded && ctx.sessionId) {
                 setTimeout(() => {
                   ctx.container.style.opacity = "1";
                   ctx.iframeStoriesDiv.style.display = "inline-block";
@@ -177,7 +177,9 @@
     // Create an iframe for the stories and set its attributes
     ctx.iframe = create("iframe", {});
     // open iframe
-    ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&closeBtn=1&resume=0`;
+    if(ctx.sessionId){
+      ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&closeBtn=1&resume=0`;
+    }
 
     ctx.iframe.allow = "autoplay";
     ctx.iframe.className = "oono-iframe";
@@ -193,7 +195,7 @@
     ctx.container = ctx.element;
     ctx.options = ctx.options;
 
-    ctx.sessionId = localStorage.getItem("oono-ctx.sessionId");
+    ctx.sessionId = localStorage.getItem("oono-sessionId");
     ctx.url = window.location.href;
     ctx.timestamp = new Date().getTime();
 
@@ -274,8 +276,12 @@ const checkUnseenStories = (ctx) => {
             // Handle the response data here
             //console.warn(data);
             if (data && data.status && data.data) {
-              ctx.sessionId = ctx.sessionId;
-              localStorage.setItem("oono-ctx.sessionId", data.data.sessionId);
+              if(!ctx.sessionId){
+                ctx.sessionId = data.data.sessionId;
+                ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&closeBtn=1&resume=0`;
+              }
+              
+              localStorage.setItem("oono-sessionId", data.data.sessionId);
               showHideRing(ctx, data.data);
             }
             ctx.requestBusy = false;
@@ -307,8 +313,8 @@ const handleIframeLoaded = (ctx) => {
             if (ctx.openWindow) {
                 setTimeout(() => {
                   ctx.container.style.opacity = "1";
-                    ctx.iframeStoriesDiv.style.display = "inline-block";
-                    ctx.iframe.contentWindow.postMessage('resume', 'https://stories.oono.ai');
+                  ctx.iframeStoriesDiv.style.display = "inline-block";
+                  ctx.iframe.contentWindow.postMessage('resume', 'https://stories.oono.ai');
                 }, 200);
                 //ctx.openWindow = false;
             }

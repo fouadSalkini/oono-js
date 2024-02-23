@@ -6,20 +6,15 @@
 
   const 
   defaultConfig = { 
-    "logoURL": "", 
-    "widgetContainerStyle": "", 
-    "openButtonStyle": "", 
-    "buttonText": "", 
-    "iframeURL": "", 
-    "svgIconColor": "", 
-    "showCircle": "", 
-    "ctx.containerId": "oono-ctx.container", 
-    "tenantId": "",
-    "activeStoriesCount": ""
+    containerId: "oono-container", 
+    tenantId: "oono",
+    autoRefresh: true
  },
  widgetWidth = "66px",
  widgetHeight = "66px",
- logoMaxWidth = "200px"
+ logoMaxWidth = "200px",
+ refreshTimer = 10000,
+ autoRefresh = true
  ;
 
 
@@ -37,6 +32,7 @@
  
   var debounce = function debounce(callback, duration) {
     var timer;
+    
     return function () {
       clearTimeout(timer);
       timer = setTimeout(function () {
@@ -131,7 +127,6 @@
             }
         }
     };
-
     // Check if ctx.logoURL is provided in ctx.options
     if (ctx.options.logoURL) {
         // If yes, create an image element and set its attributes
@@ -152,11 +147,11 @@
     } else {
         // If neither ctx.logoURL nor buttonText is provided, create an SVG element as the button content
         ctx.openStoryButton.innerHTML =
-            '<svg xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%" fill="' +
-            ctx.options?.svgIconColor +
-            '" viewbox="0 0 24 24" id="instagram-story"><path fill="' +
-            ctx.options?.svgIconColor +
-            '" fill-rule="evenodd" clip-rule="evenodd" d="M10.2263 2.128C10.3296 2.52914 10.0881 2.93802 9.68694 3.04127 9.19056 3.16903 8.7103 3.33698 8.24979 3.54149 7.87123 3.7096 7.42806 3.539 7.25994 3.16044 7.09183 2.78187 7.26243 2.3387 7.64099 2.17059 8.17667 1.9327 8.73547 1.73727 9.31306 1.58861 9.7142 1.48537 10.1231 1.72686 10.2263 2.128zM5.75633 4.15238C6.03781 4.45625 6.01966 4.93078 5.71579 5.21226 4.97148 5.90172 4.34093 6.71184 3.85525 7.61113 3.65841 7.97559 3.2034 8.11148 2.83894 7.91464 2.47448 7.71781 2.33859 7.26279 2.53543 6.89834 3.1 5.85298 3.83243 4.91218 4.69645 4.11183 5.00032 3.83035 5.47485 3.8485 5.75633 4.15238zM2.25612 9.61903C2.66481 9.6865 2.94142 10.0725 2.87396 10.4812 2.79247 10.9748 2.75 11.4821 2.75 11.9999 2.75 12.5177 2.79247 13.025 2.87396 13.5186 2.94142 13.9273 2.66481 14.3133 2.25612 14.3808 1.84744 14.4482 1.46145 14.1716 1.39399 13.7629 1.29922 13.1888 1.25 12.5998 1.25 11.9999 1.25 11.4 1.29922 10.811 1.39399 10.2369 1.46145 9.82819 1.84744 9.55157 2.25612 9.61903zM2.83894 16.0851C3.2034 15.8883 3.65841 16.0242 3.85525 16.3887 4.34093 17.288 4.97147 18.0981 5.71578 18.7875 6.01966 19.069 6.03781 19.5435 5.75633 19.8474 5.47485 20.1513 5.00032 20.1694 4.69644 19.888 3.83243 19.0876 3.1 18.1468 2.53543 17.1015 2.33859 16.737 2.47448 16.282 2.83894 16.0851zM7.25994 20.8394C7.42805 20.4608 7.87122 20.2902 8.24979 20.4583 8.7103 20.6628 9.19056 20.8308 9.68694 20.9585 10.0881 21.0618 10.3296 21.4707 10.2263 21.8718 10.1231 22.2729 9.7142 22.5144 9.31306 22.4112 8.73547 22.2625 8.17667 22.0671 7.64099 21.8292 7.26243 21.6611 7.09183 21.2179 7.25994 20.8394zM11.25 2C11.25 1.58579 11.5858 1.25 12 1.25 17.9371 1.25 22.75 6.06294 22.75 12 22.75 12.4142 22.4142 12.75 22 12.75 21.5858 12.75 21.25 12.4142 21.25 12 21.25 6.89137 17.1086 2.75 12 2.75 11.5858 2.75 11.25 2.41421 11.25 2zM21.4682 15.3127C21.8478 15.4786 22.021 15.9207 21.8552 16.3003 20.197 20.0954 16.4094 22.75 12 22.75 11.5858 22.75 11.25 22.4142 11.25 22 11.25 21.5858 11.5858 21.25 12 21.25 15.7919 21.25 19.0526 18.9682 20.4806 15.6997 20.6465 15.3202 21.0886 15.1469 21.4682 15.3127z"></path></svg>';
+            `<svg xmlns="http://www.w3.org/2000/svg" style="width:${widgetWidth};height:${widgetWidth}" fill="
+            ${ctx.options?.svgIconColor}
+            " viewbox="0 0 24 24" id="instagram-story"><path fill="
+            ${ctx.options?.svgIconColor} 
+            " fill-rule="evenodd" clip-rule="evenodd" d="M10.2263 2.128C10.3296 2.52914 10.0881 2.93802 9.68694 3.04127 9.19056 3.16903 8.7103 3.33698 8.24979 3.54149 7.87123 3.7096 7.42806 3.539 7.25994 3.16044 7.09183 2.78187 7.26243 2.3387 7.64099 2.17059 8.17667 1.9327 8.73547 1.73727 9.31306 1.58861 9.7142 1.48537 10.1231 1.72686 10.2263 2.128zM5.75633 4.15238C6.03781 4.45625 6.01966 4.93078 5.71579 5.21226 4.97148 5.90172 4.34093 6.71184 3.85525 7.61113 3.65841 7.97559 3.2034 8.11148 2.83894 7.91464 2.47448 7.71781 2.33859 7.26279 2.53543 6.89834 3.1 5.85298 3.83243 4.91218 4.69645 4.11183 5.00032 3.83035 5.47485 3.8485 5.75633 4.15238zM2.25612 9.61903C2.66481 9.6865 2.94142 10.0725 2.87396 10.4812 2.79247 10.9748 2.75 11.4821 2.75 11.9999 2.75 12.5177 2.79247 13.025 2.87396 13.5186 2.94142 13.9273 2.66481 14.3133 2.25612 14.3808 1.84744 14.4482 1.46145 14.1716 1.39399 13.7629 1.29922 13.1888 1.25 12.5998 1.25 11.9999 1.25 11.4 1.29922 10.811 1.39399 10.2369 1.46145 9.82819 1.84744 9.55157 2.25612 9.61903zM2.83894 16.0851C3.2034 15.8883 3.65841 16.0242 3.85525 16.3887 4.34093 17.288 4.97147 18.0981 5.71578 18.7875 6.01966 19.069 6.03781 19.5435 5.75633 19.8474 5.47485 20.1513 5.00032 20.1694 4.69644 19.888 3.83243 19.0876 3.1 18.1468 2.53543 17.1015 2.33859 16.737 2.47448 16.282 2.83894 16.0851zM7.25994 20.8394C7.42805 20.4608 7.87122 20.2902 8.24979 20.4583 8.7103 20.6628 9.19056 20.8308 9.68694 20.9585 10.0881 21.0618 10.3296 21.4707 10.2263 21.8718 10.1231 22.2729 9.7142 22.5144 9.31306 22.4112 8.73547 22.2625 8.17667 22.0671 7.64099 21.8292 7.26243 21.6611 7.09183 21.2179 7.25994 20.8394zM11.25 2C11.25 1.58579 11.5858 1.25 12 1.25 17.9371 1.25 22.75 6.06294 22.75 12 22.75 12.4142 22.4142 12.75 22 12.75 21.5858 12.75 21.25 12.4142 21.25 12 21.25 6.89137 17.1086 2.75 12 2.75 11.5858 2.75 11.25 2.41421 11.25 2zM21.4682 15.3127C21.8478 15.4786 22.021 15.9207 21.8552 16.3003 20.197 20.0954 16.4094 22.75 12 22.75 11.5858 22.75 11.25 22.4142 11.25 22 11.25 21.5858 11.5858 21.25 12 21.25 15.7919 21.25 19.0526 18.9682 20.4806 15.6997 20.6465 15.3202 21.0886 15.1469 21.4682 15.3127z"></path></svg>`;
     }
 
     // Append the story button to the ctx.iframeBtnDiv
@@ -188,18 +183,7 @@
     ctx.widgetDiv.appendChild(ctx.iframeStoriesDiv);
   };
 
-  var configure = (function (ctx) {
-    //console.log("ctx", ctx);
-    ctx.selector = ctx.options.selector || "#" + ctx.options.containerId;
-    ctx.element = select$1(ctx.selector);
-    ctx.container = ctx.element;
-    ctx.options = ctx.options;
-
-    ctx.sessionId = localStorage.getItem("oono-sessionId");
-    ctx.url = window.location.href;
-    ctx.timestamp = new Date().getTime();
-
-  });
+  
 
   var eventEmitter = (function (name, ctx) {
     ctx.input.dispatchEvent(new CustomEvent(name, {
@@ -243,6 +227,7 @@
 };
 
 const checkUnseenStories = (ctx) => {
+  
     if (ctx.requestBusy) {
         return;
     }
@@ -251,7 +236,7 @@ const checkUnseenStories = (ctx) => {
         showHideRing(ctx, null);
         return;
     }
-
+    console.log("checking unseen stories");
     var requestUrl = `https://${ctx.options.tenantId}.oono.ai/api/tenant/stories/have-unseen`;
     var postData = {};
     if (ctx.sessionId) {
@@ -287,8 +272,7 @@ const checkUnseenStories = (ctx) => {
             ctx.requestBusy = false;
         })
         .catch((error) => {
-            // Handle errors here
-            //console.error("Error:", error);
+            console.error("Error checking stories:", error);
             showHideRing(ctx, null);
             ctx.requestBusy = false;
         }).finally(() => {
@@ -323,6 +307,11 @@ const handleIframeLoaded = (ctx) => {
     });
 };
 
+const appendHtml = (ctx) => {
+  ctx.container.innerHTML = "";
+  ctx.container.appendChild(ctx.widgetDiv);
+}
+
 const addEventListeners = (ctx) => {
 
   window.addEventListener('message', function (event) {
@@ -354,8 +343,56 @@ const addEventListeners = (ctx) => {
 
 };
 
+const fetchConfig = async (ctx) => {
   
-  function init (ctx) {
+  var requestUrl = `https://${ctx.options.tenantId}.oono.ai/api/tenant/get-snippet/${ctx.uuid}`;
+  
+  let res = null;
+  // Send the GET request
+  await fetch(requestUrl)
+      .then((response) => response.json())
+      .then((data) => {
+          if (data && data.status && data.data) {
+            res = data.data;
+          }
+      })
+      .catch((error) => {
+        console.log("error fetching config", error)
+      }).finally(() => {
+      });
+      return res;
+};
+
+const doRefresh = async (ctx)  => {
+  console.log("refreshing");
+  const data = await fetchConfig(ctx);
+  if(!data){
+    return false;
+  }
+  if(data.logoURL != ctx.options.logoURL){
+    ctx.options = data;
+    init(ctx, false);
+  }else if(data.activeStoriesCount != ctx.options.activeStoriesCount){
+    ctx.options.activeStoriesCount = data.activeStoriesCount;
+    checkUnseenStories(ctx);
+  }
+}
+
+const refresh = async (ctx)  => {
+  await doRefresh(ctx);
+  var refTimer = debounce(() =>{
+    refresh(ctx)
+  },ctx.refreshTimer)
+  if(ctx.autoRefresh){
+    refTimer();
+  }
+}
+
+const destroy = (ctx) => {
+  return ctx.container.innerHTML = "";
+}
+  
+  const init =  (ctx, allowRefresh = true) => {
     var _this = this;
     return new Promise(function ($return, $error) {
       createMainWidget(ctx);
@@ -364,12 +401,7 @@ const addEventListeners = (ctx) => {
       createOpenStoryBtn(ctx);
       createIframeStoriesDiv(ctx);
       createIframe(ctx);
-      if (ctx.container) {
-        ctx.container.innerHTML = "";
-          ctx.container.appendChild(ctx.widgetDiv);
-      } else {
-          //document.body.appendChild(widgetDiv);
-      }
+      appendHtml(ctx);
       addEventListeners(ctx);
       handleIframeLoaded(ctx);
       setTimeout(() => {
@@ -377,6 +409,15 @@ const addEventListeners = (ctx) => {
               checkUnseenStories(ctx);
           }
       }, 200);
+      if(allowRefresh){
+        var autoRefresh = debounce(() =>{
+          refresh(ctx)
+        },ctx.refreshTimer)
+        if(ctx.autoRefresh){
+          autoRefresh();
+        }
+      }
+      
       
     });
   }
@@ -386,12 +427,45 @@ const addEventListeners = (ctx) => {
     prototype.init = function () {
       init(this);
     };
-    prototype.open = function () {
-      open(this);
+    prototype.destroy = function () {
+      destroy(this);
     };
-    prototype.close = function () {
-      close(this);
+    prototype.refresh = function () {
+      doRefresh(this);
     };
+  }
+
+  const doInit = async (ctx) => {
+
+    if(!ctx.options.tenantId){
+      console.error(`invalid tenant id `);
+      return false;
+    }
+    if(!ctx.options.containerId){
+      console.error(`invalid container id `);
+      return false;
+    }
+    ctx.selector = ctx.options.selector || "#" + ctx.options.containerId;
+    ctx.uuid = ctx.options.containerId.replace("oono-", "");
+    ctx.element = select$1(ctx.selector);
+    ctx.container = ctx.element;
+    if(!ctx.container){
+      console.error(`invalid container id: ${ctx.selector} `);
+      return false;
+    }
+    ctx.autoRefresh = typeof ctx.options.autoRefresh !== "undefined" ? ctx.options.autoRefresh : autoRefresh;
+    ctx.sessionId = localStorage.getItem("oono-sessionId");
+    ctx.url = window.location.href;
+    ctx.timestamp = new Date().getTime();
+    ctx.refreshTimer = ctx.options.refreshTimer ? ctx.options.refreshTimer : refreshTimer;
+    extend.call(ctx, oonoStories);
+    const data = await fetchConfig(ctx);
+    if(!data){
+      console.error(`invalid  config`);
+      return false;
+    }
+    ctx.options = data;
+    init(ctx);
   }
 
   function oonoStories(config) {
@@ -400,12 +474,9 @@ const addEventListeners = (ctx) => {
     }
     this.options = typeof config === "undefined" ? defaultConfig : config;
     this.id = oonoStories.instances = (oonoStories.instances || 0) + 1;
-    this.name = `oonoStories${this.id}`;
+    this.name = `oonoStories-${this.id}`;
     this.debounce = 0;
-    configure(this);
-    extend.call(this, oonoStories);
-    init(this);
-    //console.log("this ",this)
+    doInit(this);
   }
 
   return oonoStories;

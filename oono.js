@@ -453,6 +453,11 @@ const destroy = (ctx) => {
       console.error(`invalid container id: ${ctx.selector} `);
       return false;
     }
+    if(ctx.container.dataset.initialized){
+      console.warn(`the element has been initialized`);
+      return;
+    }
+    ctx.container.dataset.initialized = "true";
     ctx.autoRefresh = typeof ctx.options.autoRefresh !== "undefined" ? ctx.options.autoRefresh : autoRefresh;
     ctx.sessionId = localStorage.getItem("oono-sessionId");
     ctx.url = window.location.href;

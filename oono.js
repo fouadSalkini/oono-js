@@ -435,6 +435,27 @@ const destroy = (ctx) => {
     };
   }
 
+  const makeSessionId = (length) => {
+    let result = "";
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+  };
+
+  const getSessionId = () => {
+    let session = localStorage.getItem("oono-sessionId");
+    if(!session){
+      session = makeSessionId(15);
+    }
+    return session;
+  };
+
   const doInit = async (ctx) => {
 
     if(!ctx.options.tenantId){
@@ -445,8 +466,12 @@ const destroy = (ctx) => {
       console.error(`invalid container id `);
       return false;
     }
+    if(!ctx.options.widgetId){
+      console.error(`invalid widget id `);
+      return false;
+    }
     ctx.selector = ctx.options.selector || "#" + ctx.options.containerId;
-    ctx.uuid = ctx.options.containerId.replace("oono-", "");
+    ctx.uuid = ctx.options.widgetId;
     ctx.element = select$1(ctx.selector);
     ctx.container = ctx.element;
     if(!ctx.container){
@@ -459,7 +484,7 @@ const destroy = (ctx) => {
     }
     ctx.container.dataset.initialized = "true";
     ctx.autoRefresh = typeof ctx.options.autoRefresh !== "undefined" ? ctx.options.autoRefresh : autoRefresh;
-    ctx.sessionId = localStorage.getItem("oono-sessionId");
+    ctx.sessionId = getSessionId();
     ctx.url = window.location.href;
     ctx.timestamp = new Date().getTime();
     ctx.refreshTimer = ctx.options.refreshTimer ? ctx.options.refreshTimer : refreshTimer;

@@ -202,7 +202,7 @@
     }
     
     if (
-        (typeof data === "undefined" || data.showRing) &&
+        (typeof data === "undefined" || data.unseenCount) &&
         ctx.options.activeStoriesCount
     ) {
         // showing ring
@@ -210,11 +210,10 @@
         ctx.widgetDiv.style.borderWidth = "3.5px";
         ctx.widgetDiv.style.borderStyle = "solid";
 
-        if (data?.unseenCount) {
-            // show badge
-            ctx.badgeDiv.style.display = "flex";
-            ctx.badgeDiv.innerHTML = data?.unseenCount;
-        }
+        // show badge
+        ctx.badgeDiv.style.display = "flex";
+        ctx.badgeDiv.innerHTML = data?.unseenCount;
+
     } else {
         // hiding ring
         ctx.widgetDiv.style.borderColor = "lightgrey";
@@ -320,6 +319,7 @@ const addEventListeners = (ctx) => {
           // Log the message sent from the iframe
           //console.log('Message received from iframeee:', event.data);
           if (event.data == 'Escape') {
+            console.log("exit window");
               ctx.openWindow = false;
               ctx.iframeStoriesDiv.style.display = "none";
               ctx.openWindow = false;
@@ -344,8 +344,11 @@ const addEventListeners = (ctx) => {
 };
 
 const fetchConfig = async (ctx) => {
+
+
   
-  var requestUrl = `https://${ctx.options.tenantId}.oono.ai/api/tenant/get-snippet/${ctx.uuid}`;
+  
+  var requestUrl = `https://${ctx.options.tenantId}.oono.ai/api/tenant/get-snippet/${ctx.uuid}?sessionId=${ctx.sessionId}`;
   
   let res = null;
   // Send the GET request
@@ -371,10 +374,14 @@ const doRefresh = async (ctx)  => {
   }
   if(data.logoURL != ctx.options.logoURL){
     ctx.options = data;
-    init(ctx, false);
-  }else if(data.activeStoriesCount != ctx.options.activeStoriesCount){
-    ctx.options.activeStoriesCount = data.activeStoriesCount;
-    checkUnseenStories(ctx);
+    return init(ctx, false);
+  }
+  if(data.activeStoriesCount != ctx.options.activeStoriesCount || 
+    data.unseenCount != ctx.options.unseenCount){
+      ctx.options.activeStoriesCount = data.activeStoriesCount;
+      ctx.options.unseenCount = data.unseenCount;
+      // checkUnseenStories(ctx);
+      showHideRing(ctx, data);
   }
 }
 

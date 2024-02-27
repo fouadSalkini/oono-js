@@ -8,13 +8,15 @@
   defaultConfig = { 
     containerId: "oono-container", 
     tenantId: "oono",
-    autoRefresh: true
+    autoRefresh: true,
+    preview: false
  },
  widgetWidth = "66px",
  widgetHeight = "66px",
  logoMaxWidth = "200px",
  refreshTimer = 10000,
- autoRefresh = true
+ autoRefresh = true,
+ preview = false
  ;
 
 
@@ -162,7 +164,7 @@
     ctx.iframe = create("iframe", {});
     // open iframe
     if(ctx.sessionId){
-      ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&closeBtn=1&resume=0`;
+      setIframeUrl(ctx);
     }
 
     ctx.iframe.allow = "autoplay";
@@ -251,7 +253,7 @@ const checkUnseenStories = (ctx) => {
             if (data && data.status && data.data) {
               if(!ctx.sessionId){
                 ctx.sessionId = data.data.sessionId;
-                ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&closeBtn=1&resume=0`;
+                setIframeUrl(ctx);
               }
               
               localStorage.setItem("oono-sessionId", data.data.sessionId);
@@ -269,6 +271,14 @@ const checkUnseenStories = (ctx) => {
         });
 };
 
+const setIframeUrl = (ctx, story) => {
+  if(typeof story === "undefined"){
+    var story = 0;
+  }
+  const prev = ctx.preview ? 1 : 0;
+  ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&preview=${prev}&closeBtn=1&resume=0&storyId=${story}`;
+};
+
 const handleIframeLoaded = (ctx) => {
     if (!ctx.container) {
         return;
@@ -279,7 +289,6 @@ const handleIframeLoaded = (ctx) => {
             return;
         }
         // The iframe has finished loading
-        //console.log("Iframe loaded!", ctx.iframe.src);
         if (ctx.iframeStoriesDiv) {
             ctx.iframeLoaded = true;
             if (ctx.openWindow) {
@@ -429,7 +438,7 @@ const destroy = (ctx) => {
     if(!ctx.iframe){
       return console.error("iframe not exists");
     }
-    ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&closeBtn=1&resume=0&storyId=${id}`;
+    setIframeUrl(ctx, id);
   }
 
   function extend (oonoStories) {
@@ -461,7 +470,7 @@ const destroy = (ctx) => {
     ctx.openWindow = false;
     ctx.iframeStoriesDiv.style.display = "none";
     checkUnseenStories(ctx);
-    ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&closeBtn=1&resume=0`;
+    setIframeUrl(ctx);
   }
 
   const openWindow = (ctx) => {
@@ -528,6 +537,7 @@ const destroy = (ctx) => {
     }
     ctx.container.dataset.initialized = "true";
     ctx.autoRefresh = typeof ctx.options.autoRefresh !== "undefined" ? ctx.options.autoRefresh : autoRefresh;
+    ctx.preview = typeof ctx.options.preview !== "undefined" ? ctx.options.preview : preview;
     ctx.sessionId = getSessionId();
     ctx.url = window.location.href;
     ctx.timestamp = new Date().getTime();

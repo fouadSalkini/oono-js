@@ -114,18 +114,7 @@
     // Add click event to show the iframe stories
     ctx.openStoryButton.onclick = function () {
       //console.log("openStory btn clicked", ctx.container)
-        if (ctx.iframeStoriesDiv) {
-          ctx.container.style.opacity = "0.5";
-            ctx.openWindow = true;
-            if (ctx.iframeLoaded && ctx.sessionId) {
-                setTimeout(() => {
-                  ctx.container.style.opacity = "1";
-                  ctx.iframeStoriesDiv.style.display = "inline-block";
-                  //console.log("trigger resume event");
-                  ctx.iframe.contentWindow.postMessage('resume', 'https://stories.oono.ai');
-                }, 200);
-            }
-        }
+        openWindow(ctx);
     };
     // Check if ctx.logoURL is provided in ctx.options
     if (ctx.options.logoURL) {
@@ -361,6 +350,9 @@ const fetchConfig = async (ctx) => {
 };
 
 const doRefresh = async (ctx)  => {
+  if(!ctx.container.dataset.initialized){
+    return false;
+  }
   console.log("refreshing");
   const data = await fetchConfig(ctx);
   if(!data){
@@ -370,16 +362,22 @@ const doRefresh = async (ctx)  => {
     ctx.options = data;
     return init(ctx, false);
   }
+  ctx.options.firstToWatch = data.firstToWatch;
+  if(data.firstToWatch){
+    setStoryId(ctx, data.firstToWatch);
+  }
   if(data.activeStoriesCount != ctx.options.activeStoriesCount || 
     data.unseenCount != ctx.options.unseenCount){
       ctx.options.activeStoriesCount = data.activeStoriesCount;
       ctx.options.unseenCount = data.unseenCount;
-      // checkUnseenStories(ctx);
       showHideRing(ctx, data);
   }
 }
 
 const refresh = async (ctx)  => {
+  if(!ctx.container.dataset.initialized){
+    return false;
+  }
   await doRefresh(ctx);
   var refTimer = debounce(() =>{
     refresh(ctx)
@@ -390,6 +388,7 @@ const refresh = async (ctx)  => {
 }
 
 const destroy = (ctx) => {
+  ctx.container.dataset.initialized = false;
   return ctx.container.innerHTML = "";
 }
   
@@ -424,6 +423,12 @@ const destroy = (ctx) => {
   }
 
   const setStoryId = (ctx, id) => {
+    if(ctx.openWindow){
+      return console.warn("window opened!");
+    }
+    if(!ctx.iframe){
+      return console.error("iframe not exists");
+    }
     ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&closeBtn=1&resume=0&storyId=${id}`;
   }
 
@@ -442,6 +447,9 @@ const destroy = (ctx) => {
       setStoryId(this, storyId)
     };
     prototype.open = function () {
+      if(!this.openStoryButton){
+        return console.error('No open button found');
+      }
       this.openStoryButton.click();
     };
     prototype.close = function () {
@@ -452,9 +460,23 @@ const destroy = (ctx) => {
   const closeWindow = (ctx) => {
     ctx.openWindow = false;
     ctx.iframeStoriesDiv.style.display = "none";
-    ctx.openWindow = false;
     checkUnseenStories(ctx);
     ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&closeBtn=1&resume=0`;
+  }
+
+  const openWindow = (ctx) => {
+    if (ctx.iframeStoriesDiv) {
+      ctx.container.style.opacity = "0.5";
+        ctx.openWindow = true;
+        if (ctx.iframeLoaded && ctx.sessionId) {
+            setTimeout(() => {
+              ctx.container.style.opacity = "1";
+              ctx.iframeStoriesDiv.style.display = "inline-block";
+              //console.log("trigger resume event");
+              ctx.iframe.contentWindow.postMessage('resume', 'https://stories.oono.ai');
+            }, 200);
+        }
+    }
   }
 
   const makeSessionId = (length) => {

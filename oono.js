@@ -402,8 +402,7 @@ const destroy = (ctx) => {
 }
   
   const init =  (ctx, allowRefresh = true) => {
-    var _this = this;
-    return new Promise(function ($return, $error) {
+    // return new Promise(function ($return, $error) {
       createMainWidget(ctx);
       createBadgeDiv(ctx);
       createIframeBtnDiv(ctx);
@@ -428,7 +427,7 @@ const destroy = (ctx) => {
       }
       
       
-    });
+    // });
   }
 
   const setStoryId = (ctx, id) => {

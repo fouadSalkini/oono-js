@@ -320,10 +320,7 @@ const addEventListeners = (ctx) => {
           //console.log('Message received from iframeee:', event.data);
           if (event.data == 'Escape') {
             console.log("exit window");
-              ctx.openWindow = false;
-              ctx.iframeStoriesDiv.style.display = "none";
-              ctx.openWindow = false;
-              checkUnseenStories(ctx);
+              closeWindow(ctx);
           }
   
       }
@@ -334,10 +331,7 @@ const addEventListeners = (ctx) => {
       //console.log("key down", evt)
       if (evt.code == 'Escape') {
           //console.log("close escape")
-          ctx.openWindow = false;
-          ctx.iframeStoriesDiv.style.display = "none";
-          ctx.openWindow = false;
-          checkUnseenStories(ctx);
+          closeWindow(ctx);
       }
   };
 
@@ -429,6 +423,10 @@ const destroy = (ctx) => {
     });
   }
 
+  const setStoryId = (ctx, id) => {
+    ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&closeBtn=1&resume=0&storyId=${id}`;
+  }
+
   function extend (oonoStories) {
     var prototype = oonoStories.prototype;
     prototype.init = function () {
@@ -440,6 +438,23 @@ const destroy = (ctx) => {
     prototype.refresh = function () {
       doRefresh(this);
     };
+    prototype.setStoryId = function (storyId) {
+      setStoryId(this, storyId)
+    };
+    prototype.open = function () {
+      this.openStoryButton.click();
+    };
+    prototype.close = function () {
+      closeWindow(this);
+    };
+  }
+
+  const closeWindow = (ctx) => {
+    ctx.openWindow = false;
+    ctx.iframeStoriesDiv.style.display = "none";
+    ctx.openWindow = false;
+    checkUnseenStories(ctx);
+    ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&closeBtn=1&resume=0`;
   }
 
   const makeSessionId = (length) => {

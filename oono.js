@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.13
+ * oono JavaScript Library v1.0.14
  *
  * Copyright wecansync
  *
@@ -28,7 +28,7 @@
     autoRefresh: true,
     preview: false,
     host: defaultHost
- },
+ }
  
  ;
 

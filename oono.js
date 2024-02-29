@@ -1,3 +1,10 @@
+/*!
+ * oono JavaScript Library v1.0.13
+ *
+ * Copyright wecansync
+ *
+ * Date: 2024-02-29T17:08Z
+ */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -5,18 +12,24 @@
 })(this, (function () { 'use strict';
 
   const 
+  widgetWidth = "66px",
+  widgetHeight = "66px",
+  logoMaxWidth = "200px",
+  refreshTimer = 10000,
+  autoRefresh = true,
+  preview = false,
+  defaultTenant = "oono",
+  defaultContainerId = "oono-container",
+  defaultHost = "oono.ai",
+
   defaultConfig = { 
-    containerId: "oono-container", 
-    tenantId: "oono",
+    containerId: defaultContainerId, 
+    tenantId: defaultTenant,
     autoRefresh: true,
-    preview: false
+    preview: false,
+    host: defaultHost
  },
- widgetWidth = "66px",
- widgetHeight = "66px",
- logoMaxWidth = "200px",
- refreshTimer = 10000,
- autoRefresh = true,
- preview = false
+ 
  ;
 
 
@@ -227,7 +240,7 @@ const checkUnseenStories = (ctx) => {
         return;
     }
     console.log("checking unseen stories");
-    var requestUrl = `https://${ctx.options.tenantId}.oono.ai/api/tenant/stories/have-unseen`;
+    var requestUrl = `https://${ctx.options.tenantId}.${ctx.host}/api/tenant/stories/have-unseen`;
     var postData = {};
     if (ctx.sessionId) {
         postData = {
@@ -294,7 +307,7 @@ const handleIframeLoaded = (ctx) => {
                 setTimeout(() => {
                   ctx.container.style.opacity = "1";
                   ctx.iframeStoriesDiv.style.display = "inline-block";
-                  ctx.iframe.contentWindow.postMessage('resume', 'https://stories.oono.ai');
+                  ctx.iframe.contentWindow.postMessage('resume', `https://stories.${ctx.host}`);
                 }, 200);
                 //ctx.openWindow = false;
             }
@@ -339,7 +352,7 @@ const fetchConfig = async (ctx) => {
 
   
   
-  var requestUrl = `https://${ctx.options.tenantId}.oono.ai/api/tenant/get-snippet/${ctx.uuid}?sessionId=${ctx.sessionId}`;
+  var requestUrl = `https://${ctx.options.tenantId}.${ctx.host}/api/tenant/get-snippet/${ctx.uuid}?sessionId=${ctx.sessionId}`;
   
   let res = null;
   // Send the GET request
@@ -484,7 +497,7 @@ const destroy = (ctx) => {
               ctx.container.style.opacity = "1";
               ctx.iframeStoriesDiv.style.display = "inline-block";
               //console.log("trigger resume event");
-              ctx.iframe.contentWindow.postMessage('resume', 'https://stories.oono.ai');
+              ctx.iframe.contentWindow.postMessage('resume', `https://stories.${ctx.host}`);
             }, 200);
         }
     }
@@ -538,6 +551,7 @@ const destroy = (ctx) => {
       return;
     }
     ctx.container.dataset.initialized = "true";
+    ctx.host = typeof ctx.options.host !== "undefined" ? ctx.options.host : defaultHost;
     ctx.autoRefresh = typeof ctx.options.autoRefresh !== "undefined" ? ctx.options.autoRefresh : autoRefresh;
     ctx.preview = typeof ctx.options.preview !== "undefined" ? ctx.options.preview : preview;
     ctx.sessionId = getSessionId();

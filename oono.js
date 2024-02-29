@@ -218,7 +218,7 @@
 
 const checkUnseenStories = (ctx) => {
   
-    if (ctx.requestBusy) {
+    if (!!ctx.requestBusy) {
         return;
     }
     ctx.requestBusy = true;
@@ -267,7 +267,6 @@ const checkUnseenStories = (ctx) => {
             ctx.requestBusy = false;
         }).finally(() => {
             
-
         });
 };
 
@@ -469,7 +468,11 @@ const destroy = (ctx) => {
     ctx.openWindow = false;
     ctx.iframeStoriesDiv.style.display = "none";
     checkUnseenStories(ctx);
+    if(!!ctx.preview){
+      return;
+    }
     setIframeUrl(ctx);
+    
   }
 
   const openWindow = (ctx) => {

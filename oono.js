@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.14
+ * oono JavaScript Library v1.0.15
  *
  * Copyright wecansync
  *
@@ -239,7 +239,6 @@ const checkUnseenStories = (ctx) => {
         showHideRing(ctx, null);
         return;
     }
-    console.log("checking unseen stories");
     var requestUrl = `https://${ctx.options.tenantId}.${ctx.host}/api/tenant/stories/have-unseen`;
     var postData = {};
     if (ctx.sessionId) {
@@ -353,7 +352,6 @@ const fetchConfig = async (ctx) => {
   
   
   var requestUrl = `https://${ctx.options.tenantId}.${ctx.host}/api/tenant/get-snippet/${ctx.uuid}?sessionId=${ctx.sessionId}`;
-  
   let res = null;
   // Send the GET request
   await fetch(requestUrl)

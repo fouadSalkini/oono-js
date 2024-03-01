@@ -170,6 +170,7 @@
     ctx.iframeStoriesDiv.style.display = "none";
     ctx.iframeStoriesDiv.style.position = "relative";
     ctx.iframeStoriesDiv.style.boxSizing = "border-box";
+    ctx.iframeStoriesDiv.id = `oono-iframe-stories-${ctx.id}`;
   };
 
   var createIframe = (ctx) => {
@@ -182,9 +183,10 @@
 
     ctx.iframe.allow = "autoplay";
     ctx.iframe.className = "oono-iframe";
-    ctx.iframe.style.cssText = "position: fixed; top: initial; background-color: rgb(0, 0, 0); left: 0px; width: 100vw; height: 100%; z-index: 1100; border: none; outline: 0px; padding: 0px; margin: 0px; bottom: constant(safe-area-inset-bottom); bottom: env(safe-area-inset-bottom);";
+    ctx.iframe.style.cssText = "position: fixed; top: 0px; background-color: rgb(0, 0, 0); left: 0px; width: 100vw; height: 100%; z-index: 1100; border: none; outline: 0px; padding: 0px; margin: 0px; bottom: constant(safe-area-inset-bottom); bottom: env(safe-area-inset-bottom);";
     ctx.iframeStoriesDiv.appendChild(ctx.iframe);
-    ctx.widgetDiv.appendChild(ctx.iframeStoriesDiv);
+    //ctx.widgetDiv.appendChild(ctx.iframeStoriesDiv);
+    document.body.appendChild(ctx.iframeStoriesDiv);
   };
 
   
@@ -545,7 +547,7 @@ const destroy = (ctx) => {
       return false;
     }
     if(ctx.container.dataset.initialized){
-      console.warn(`the element has been initialized`);
+      console.warn(`the oono element has already been initialized`);
       return;
     }
     ctx.container.dataset.initialized = "true";

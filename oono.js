@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.15
+ * oono JavaScript Library v1.0.16
  *
  * Copyright wecansync
  *

@@ -21,24 +21,33 @@
     <meta name="msapplication-tap-highlight" content="no" />
 </head>
 
-<body>
+<body style="background-color:#000">
     <h1 style="font-family: Helvetica;">Oono Stories Example</h1>
 
 
     <!--Start of Oono Script-->
-    <div style="display:inline-block" id="oono-test"></div>
+    
     <script type='text/javascript' src='../oono.js'></script>
+
+    <div style="display:inline-block" class="oono-test"></div>
     <script>
         var stories = new oonoStories({
-            containerId: "oono-test",
-            tenantId: "920595372",
-            widgetId: "9a7c9e53-2eae-4f04-81b1-41baab8cc89a",
-            //host: "oono.ai",
+            selector: ".oono-test",
+            tenantId: "899470041",
+            widgetId: "e4c3ae87-42a6-4f4e-9f59-f9f3bd371765",
+            // host: "oono.ai",
             // refreshTimer: 3000,
             // autoRefresh: false,
             // preview: true, // to disable the views counter
         })
+       
     </script>
+
+   
+
+    
+    
+    
     <!--End of Oono Script-->
 
 </body>

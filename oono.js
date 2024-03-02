@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.16
+ * oono JavaScript Library v1.0.17
  *
  * Copyright wecansync
  *
@@ -33,10 +33,17 @@
  ;
 
 
-  var select$1 = function select(element) {
-    return typeof element === "string" ? document.querySelector(element) : element();
+  const select$1 = (element) => {
+    const sel = typeof element === "string" ? document.querySelectorAll(element) : element();
+    // for(var i=0; i < sel.length; i++){
+    //   if(!sel[i].dataset.initialized){
+    //     return sel[i];
+    //   }
+    // }
+    return sel;
   };
-  var create = function create(tag, options) {
+
+  const create = (tag, options) => {
     var el = typeof tag === "string" ? document.createElement(tag) : tag;
     for (var key in options) {
       var val = options[key];
@@ -45,7 +52,7 @@
     return el;
   };
  
-  var debounce = function debounce(callback, duration) {
+  const debounce = (callback, duration) => {
     var timer;
     
     return function () {
@@ -56,7 +63,7 @@
     };
   };
 
-  var createMainWidget = (ctx) => {
+  const createMainWidget = (ctx) => {
     ctx.widgetDiv = create("div", {});
     ctx.widgetDiv.className = "oono-widget";
     ctx.widgetDiv.style.cssText = ctx.options.widgetContainerStyle; // Set the styles provided
@@ -97,7 +104,7 @@
     }
   };
 
-  var createBadgeDiv = (ctx) => {
+  const createBadgeDiv = (ctx) => {
     // Create a div for the story badge
     ctx.badgeDiv = create("div", {});
     ctx.badgeDiv.className = "oono-badge";
@@ -105,7 +112,7 @@
     ctx.widgetDiv.appendChild(ctx.badgeDiv);
   };
 
-  var createIframeBtnDiv = (ctx) => {
+  const createIframeBtnDiv = (ctx) => {
     ctx.iframeBtnDiv = create("div", {});
     ctx.iframeBtnDiv.className = "oono-iframe-btn";
     //ctx.iframeBtnDiv.style.cssText = ctx.options.openButtonStyle; // Set the styles provided
@@ -115,7 +122,7 @@
     }
   };
 
-  var createOpenStoryBtn = (ctx) => {
+  const createOpenStoryBtn = (ctx) => {
     // Create the story button itself
     ctx.openStoryButton = create("div", {});
     ctx.openStoryButton.className = "oono-open-story-button";
@@ -127,9 +134,9 @@
         ctx.openStoryButton.style.cssText = "width:100%;height:auto;";
     }
     // Add click event to show the iframe stories
-    ctx.openStoryButton.onclick = function () {
+    ctx.openStoryButton.onclick = function (e) {
       //console.log("openStory btn clicked", ctx.container)
-        openWindow(ctx);
+        openWindow(ctx, this);
     };
     // Check if ctx.logoURL is provided in ctx.options
     if (ctx.options.logoURL) {
@@ -163,17 +170,23 @@
     ctx.widgetDiv.appendChild(ctx.iframeBtnDiv);
   };
 
-  var createIframeStoriesDiv = (ctx) => {
+  const createIframeStoriesDiv = (ctx) => {
     // Create a div for the iframe stories
+    const iframeClass = `.oono-iframe-stories-${ctx.uuid}`;
+    const alreadyAdded = select$1(iframeClass);
+    if(alreadyAdded.length){
+      ctx.iframeStoriesDiv = alreadyAdded[0];
+      return;
+    }
     ctx.iframeStoriesDiv = create("div", {});
     ctx.iframeStoriesDiv.className = "oono-iframe-stories";
     ctx.iframeStoriesDiv.style.display = "none";
     ctx.iframeStoriesDiv.style.position = "relative";
     ctx.iframeStoriesDiv.style.boxSizing = "border-box";
-    ctx.iframeStoriesDiv.id = `oono-iframe-stories-${ctx.id}`;
+    ctx.iframeStoriesDiv.className = `oono-iframe-stories-${ctx.uuid}`;
   };
 
-  var createIframe = (ctx) => {
+  const createIframe = (ctx) => {
     // Create an iframe for the stories and set its attributes
     ctx.iframe = create("iframe", {});
     // open iframe
@@ -191,7 +204,7 @@
 
   
 
-  var eventEmitter = (function (name, ctx) {
+  const eventEmitter = (function (name, ctx) {
     ctx.input.dispatchEvent(new CustomEvent(name, {
       bubbles: true,
       detail: ctx.feedback,
@@ -211,24 +224,45 @@
         (typeof data === "undefined" || data.unseenCount) &&
         ctx.options.activeStoriesCount
     ) {
-        // showing ring
-        ctx.widgetDiv.style.borderColor = "red";
-        ctx.widgetDiv.style.borderWidth = "3.5px";
-        ctx.widgetDiv.style.borderStyle = "solid";
-
-        // show badge
-        ctx.badgeDiv.style.display = "flex";
-        ctx.badgeDiv.innerHTML = data?.unseenCount;
+      showRing(ctx, data?.unseenCount);
 
     } else {
-        // hiding ring
-        ctx.widgetDiv.style.borderColor = "lightgrey";
-        ctx.widgetDiv.style.borderWidth = "2px";
-        ctx.widgetDiv.style.borderStyle = "solid";
-
-        //hide badge
-        ctx.badgeDiv.style.display = "none";
+        hideRing(ctx);
     }
+};
+
+const showRing = (ctx, badge) => {
+  ctx.elements.forEach((el) => {
+    var widgetDiv = el.querySelector(".oono-widget");
+    var badgeDiv = el.querySelector(".oono-badge");
+
+    // showing ring
+    widgetDiv.style.borderColor = "red";
+    widgetDiv.style.borderWidth = "3.5px";
+    widgetDiv.style.borderStyle = "solid";
+
+    // show badge
+    badgeDiv.style.display = "flex";
+    badgeDiv.innerHTML = badge;
+  });
+ 
+};
+
+const hideRing = (ctx) => {
+
+  ctx.elements.forEach((el) => {
+    var widgetDiv = el.querySelector(".oono-widget");
+    var badgeDiv = el.querySelector(".oono-badge");
+
+    // hiding ring
+    widgetDiv.style.borderColor = "lightgrey";
+    widgetDiv.style.borderWidth = "2px";
+    widgetDiv.style.borderStyle = "solid";
+
+    //hide badge
+    badgeDiv.style.display = "none";
+  });
+  
 };
 
 const checkUnseenStories = (ctx) => {
@@ -257,7 +291,6 @@ const checkUnseenStories = (ctx) => {
         },
         body: JSON.stringify(postData),
     };
-
     // Send the POST request
     fetch(requestUrl, requestOptions)
         .then((response) => response.json())
@@ -306,11 +339,12 @@ const handleIframeLoaded = (ctx) => {
             ctx.iframeLoaded = true;
             if (ctx.openWindow) {
                 setTimeout(() => {
-                  ctx.container.style.opacity = "1";
+                  ctx.container.forEach((el) => {
+                    el.style.opacity = "1";
+                  });
                   ctx.iframeStoriesDiv.style.display = "inline-block";
                   ctx.iframe.contentWindow.postMessage('resume', `https://stories.${ctx.host}`);
                 }, 200);
-                //ctx.openWindow = false;
             }
 
         }
@@ -318,8 +352,11 @@ const handleIframeLoaded = (ctx) => {
 };
 
 const appendHtml = (ctx) => {
-  ctx.container.innerHTML = "";
-  ctx.container.appendChild(ctx.widgetDiv);
+  ctx.elements.forEach((element) => {
+    element.innerHTML = "";
+    element.appendChild(ctx.widgetDiv.cloneNode(true));
+    element.querySelector(".oono-open-story-button").onclick = ctx.openStoryButton.onclick;
+  })
 }
 
 const addEventListeners = (ctx) => {
@@ -330,10 +367,9 @@ const addEventListeners = (ctx) => {
           // Log the message sent from the iframe
           //console.log('Message received from iframeee:', event.data);
           if (event.data == 'Escape') {
-            console.log("exit window");
+              console.log("exit window");
               closeWindow(ctx);
           }
-  
       }
   });
 
@@ -371,7 +407,7 @@ const fetchConfig = async (ctx) => {
 };
 
 const doRefresh = async (ctx)  => {
-  if(!ctx.container.dataset.initialized){
+  if(!alreadyInitialized(ctx)){
     return false;
   }
   console.log("refreshing");
@@ -396,7 +432,7 @@ const doRefresh = async (ctx)  => {
 }
 
 const refresh = async (ctx)  => {
-  if(!ctx.container.dataset.initialized){
+  if(!alreadyInitialized(ctx)){
     return false;
   }
   await doRefresh(ctx);
@@ -488,13 +524,25 @@ const destroy = (ctx) => {
     
   }
 
-  const openWindow = (ctx) => {
+  const findParentContainer = (btn, className) => {
+    var parent = btn.parentNode;
+
+      // Loop until we find a parent element with the desired class or until we reach the top of the DOM
+      while (parent !== null && !parent.classList.contains(className)) {
+          parent = parent.parentNode;
+      }
+      
+      return parent.parentNode;
+  };
+
+  const openWindow = (ctx, btn) => {
     if (ctx.iframeStoriesDiv) {
-      ctx.container.style.opacity = "0.5";
+      var parentContainer = findParentContainer(btn, "oono-widget");
+      parentContainer.style.opacity = "0.5";
         ctx.openWindow = true;
         if (ctx.iframeLoaded && ctx.sessionId) {
             setTimeout(() => {
-              ctx.container.style.opacity = "1";
+              parentContainer.style.opacity = "1";
               ctx.iframeStoriesDiv.style.display = "inline-block";
               //console.log("trigger resume event");
               ctx.iframe.contentWindow.postMessage('resume', `https://stories.${ctx.host}`);
@@ -524,33 +572,52 @@ const destroy = (ctx) => {
     return session;
   };
 
+  const alreadyInitialized = (ctx) => {
+    for(var i = 0; i< ctx.elements.length; i++ ){
+      if(!ctx.elements[i].dataset.initialized){
+        return false;
+      }
+    }
+    return true;
+  }
+  const addInitialized = (ctx) => {
+    for(var i = 0; i< ctx.elements.length; i++ ){
+      ctx.elements[i].dataset.initialized = true;
+    }
+    return true;
+  }
+  
+
   const doInit = async (ctx) => {
 
     if(!ctx.options.tenantId){
       console.error(`invalid tenant id `);
       return false;
     }
-    if(!ctx.options.containerId){
-      console.error(`invalid container id `);
-      return false;
-    }
+    
     if(!ctx.options.widgetId){
       console.error(`invalid widget id `);
       return false;
     }
     ctx.selector = ctx.options.selector || "#" + ctx.options.containerId;
-    ctx.uuid = ctx.options.widgetId;
-    ctx.element = select$1(ctx.selector);
-    ctx.container = ctx.element;
-    if(!ctx.container){
-      console.error(`invalid container id: ${ctx.selector} `);
+
+    if(!ctx.selector){
+      console.error(`invalid selector ${ctx.selector}`);
       return false;
     }
-    if(ctx.container.dataset.initialized){
+    ctx.uuid = ctx.options.widgetId;
+    ctx.elements = select$1(ctx.selector);
+    if(!ctx.elements){
+      console.error(`element does not exists: ${ctx.selector} `);
+      return false;
+    }    
+    ctx.count = ctx.elements.length;
+    ctx.container = ctx.elements;
+    if(alreadyInitialized(ctx)){
       console.warn(`the oono element has already been initialized`);
       return;
     }
-    ctx.container.dataset.initialized = "true";
+    addInitialized(ctx);
     ctx.host = typeof ctx.options.host !== "undefined" ? ctx.options.host : defaultHost;
     ctx.autoRefresh = typeof ctx.options.autoRefresh !== "undefined" ? ctx.options.autoRefresh : autoRefresh;
     ctx.preview = typeof ctx.options.preview !== "undefined" ? ctx.options.preview : preview;
@@ -561,7 +628,7 @@ const destroy = (ctx) => {
     extend.call(ctx, oonoStories);
     const data = await fetchConfig(ctx);
     if(!data){
-      console.error(`invalid  config`);
+      console.error(`invalid config`);
       return false;
     }
     ctx.options = data;

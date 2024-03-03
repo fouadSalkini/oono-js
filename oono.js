@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.17
+ * oono JavaScript Library v1.0.18
  *
  * Copyright wecansync
  *
@@ -586,6 +586,10 @@ const destroy = (ctx) => {
     }
     return true;
   }
+
+  const filterUninitializedElements = (ctx) => {
+    ctx.elements = Array.from(ctx.elements).filter(el => !el.dataset.initialized);
+  };
   
 
   const doInit = async (ctx) => {
@@ -611,12 +615,14 @@ const destroy = (ctx) => {
       console.error(`element does not exists: ${ctx.selector} `);
       return false;
     }    
-    ctx.count = ctx.elements.length;
-    ctx.container = ctx.elements;
+    
     if(alreadyInitialized(ctx)){
       console.warn(`the oono element has already been initialized`);
       return;
     }
+    filterUninitializedElements(ctx);
+    ctx.count = ctx.elements.length;
+    ctx.container = ctx.elements;
     addInitialized(ctx);
     ctx.host = typeof ctx.options.host !== "undefined" ? ctx.options.host : defaultHost;
     ctx.autoRefresh = typeof ctx.options.autoRefresh !== "undefined" ? ctx.options.autoRefresh : autoRefresh;
@@ -643,7 +649,11 @@ const destroy = (ctx) => {
     this.id = oonoStories.instances = (oonoStories.instances || 0) + 1;
     this.name = `oonoStories-${this.id}`;
     this.debounce = 0;
-    doInit(this);
+    var _this = this;
+    setTimeout(() => {
+      doInit(_this);
+    }, 500)
+   
   }
 
   return oonoStories;

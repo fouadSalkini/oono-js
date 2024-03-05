@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.20
+ * oono JavaScript Library v1.0.21
  *
  * Copyright wecansync
  *
@@ -379,6 +379,9 @@ const addEventListeners = (ctx) => {
       if (evt.code == 'Escape') {
           //console.log("close escape")
           closeWindow(ctx);
+      }else{
+        ctx.iframe.contentWindow.postMessage(evt.code, `https://stories.${ctx.host}`);
+
       }
   };
 

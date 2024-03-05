@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.19
+ * oono JavaScript Library v1.0.20
  *
  * Copyright wecansync
  *
@@ -12,8 +12,8 @@
 })(this, (function () { 'use strict';
 
   const 
-  widgetWidth = "66px",
-  widgetHeight = "66px",
+  widgetWidth = "66",
+  widgetHeight = "66",
   logoMaxWidth = "200px",
   refreshTimer = 10000,
   autoRefresh = true,
@@ -27,7 +27,9 @@
     tenantId: defaultTenant,
     autoRefresh: true,
     preview: false,
-    host: defaultHost
+    host: defaultHost,
+    width: widgetWidth,
+    height: widgetHeight,
  }
  
  ;
@@ -77,30 +79,28 @@
     ctx.widgetDiv.style.borderWidth = "2px";
     ctx.widgetDiv.style.borderStyle = "solid";
 
-    
+    ctx.widgetDiv.style.padding = "2px";
 
 
     if (!ctx.options.activeStoriesCount) {
         if (ctx.options.showCircle) {
             ctx.widgetDiv.style.border = "2px solid transparent";
-            ctx.widgetDiv.style.padding = "1.5px";
             ctx.widgetDiv.style.borderRadius = "50%";
             ctx.widgetDiv.style.overflow = "hidden";
-            ctx.widgetDiv.style.height = widgetWidth;
-            ctx.widgetDiv.style.width = widgetHeight;
+            ctx.widgetDiv.style.height = `${ctx.width}px`;
+            ctx.widgetDiv.style.width = `${ctx.height}px`;
         } else {
             ctx.widgetDiv.style.height = "auto";
             ctx.widgetDiv.style.width = "auto";
         }
     } else {
         //widgetDiv.style.border = "3px solid red";
-        ctx.widgetDiv.style.padding = "1.5px";
         ctx.widgetDiv.style.borderRadius = "50%";
         ctx.widgetDiv.style.display = "flex";
         ctx.widgetDiv.style.alignItems = "center";
         ctx.widgetDiv.style.justifyContent = "center";
-        ctx.widgetDiv.style.height = widgetWidth;
-        ctx.widgetDiv.style.width = widgetHeight;
+        ctx.widgetDiv.style.height = `${ctx.width}px`;
+        ctx.widgetDiv.style.width = `${ctx.height}px`;
     }
   };
 
@@ -108,7 +108,7 @@
     // Create a div for the story badge
     ctx.badgeDiv = create("div", {});
     ctx.badgeDiv.className = "oono-badge";
-    ctx.badgeDiv.style.cssText ="display:none; box-sizing: border-box; width: 18px; height: 18px; align-items: center; justify-content: center; position: absolute; background: red; top: -5px; right: -5px; padding: 0px; border-radius: 50%; color: white; font-size: 11px; line-height: 11px; font-weight: bold;";
+    ctx.badgeDiv.style.cssText =`display:none; box-sizing: border-box; width: 33%; height: 33%; align-items: center; justify-content: center; position: absolute; background: red; top: -${ctx.width/13}px; right: -${ctx.width/13}px; padding: 0px; border-radius: 50%; color: white; font-size: ${ctx.width/5}px; line-height: 11px; font-weight: bold;`;
     ctx.widgetDiv.appendChild(ctx.badgeDiv);
   };
 
@@ -116,9 +116,9 @@
     ctx.iframeBtnDiv = create("div", {});
     ctx.iframeBtnDiv.className = "oono-iframe-btn";
     //ctx.iframeBtnDiv.style.cssText = ctx.options.openButtonStyle; // Set the styles provided
-    ctx.iframeBtnDiv.style.cssText = "box-sizing:border-box;width:100%;height:auto;box-sizing:border-box";
+    ctx.iframeBtnDiv.style.cssText = "width:100%;height:auto;box-sizing:border-box";
     if (ctx.options.activeStoriesCount) {
-        ctx.iframeBtnDiv.style.cssText = "width:calc(100% - 4px); height: calc(100% - 4px); border: solid 1px lightgrey; border-radius: 50%";
+        ctx.iframeBtnDiv.style.cssText = "box-sizing:border-box;width:100%; height: 100%; border: solid 1px lightgrey; border-radius: 50%";
     }
   };
 
@@ -131,7 +131,7 @@
         ctx.openStoryButton.style.cssText =
             "box-sizing:border-box;width:100%;height:100%;border-radius:50%; display:flex;align-items:center;justify-content:center;overflow:hidden";
     } else {
-        ctx.openStoryButton.style.cssText = "width:100%;height:auto;";
+        ctx.openStoryButton.style.cssText = "box-sizing:border-box;width:100%;height:auto;";
     }
     // Add click event to show the iframe stories
     ctx.openStoryButton.onclick = function (e) {
@@ -158,7 +158,7 @@
     } else {
         // If neither ctx.logoURL nor buttonText is provided, create an SVG element as the button content
         ctx.openStoryButton.innerHTML =
-            `<svg xmlns="http://www.w3.org/2000/svg" style="width:${widgetWidth};height:${widgetWidth}" fill="
+            `<svg xmlns="http://www.w3.org/2000/svg" style="width:${ctx.width}px;height:${ctx.height}px" fill="
             ${ctx.options?.svgIconColor}
             " viewbox="0 0 24 24" id="instagram-story"><path fill="
             ${ctx.options?.svgIconColor} 
@@ -238,7 +238,7 @@ const showRing = (ctx, badge) => {
 
     // showing ring
     widgetDiv.style.borderColor = "red";
-    widgetDiv.style.borderWidth = "3.5px";
+    widgetDiv.style.borderWidth = `${ctx.width/20}px`;
     widgetDiv.style.borderStyle = "solid";
 
     // show badge
@@ -256,7 +256,7 @@ const hideRing = (ctx) => {
 
     // hiding ring
     widgetDiv.style.borderColor = "lightgrey";
-    widgetDiv.style.borderWidth = "2px";
+    widgetDiv.style.borderWidth = `${ctx.width/30}px`;
     widgetDiv.style.borderStyle = "solid";
 
     //hide badge
@@ -625,6 +625,8 @@ const destroy = (ctx) => {
     ctx.container = ctx.elements;
     addInitialized(ctx);
     ctx.host = typeof ctx.options.host !== "undefined" ? ctx.options.host : defaultHost;
+    ctx.width = typeof ctx.options.width !== "undefined" ? ctx.options.width : widgetWidth;
+    ctx.height = typeof ctx.options.height !== "undefined" ? ctx.options.height : widgetHeight;
     ctx.autoRefresh = typeof ctx.options.autoRefresh !== "undefined" ? ctx.options.autoRefresh : autoRefresh;
     ctx.preview = typeof ctx.options.preview !== "undefined" ? ctx.options.preview : preview;
     ctx.sessionId = getSessionId();

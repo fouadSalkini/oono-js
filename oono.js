@@ -108,7 +108,7 @@
     // Create a div for the story badge
     ctx.badgeDiv = create("div", {});
     ctx.badgeDiv.className = "oono-badge";
-    ctx.badgeDiv.style.cssText =`display:none; box-sizing: border-box; width: 33%; height: 33%; align-items: center; justify-content: center; position: absolute; background: red; top: -${ctx.width/13}px; right: -${ctx.width/13}px; padding: 0px; border-radius: 50%; color: white; font-size: ${ctx.width/5}px; line-height: 11px; font-weight: bold;`;
+    ctx.badgeDiv.style.cssText =`display:none; box-sizing: border-box; width: 33%; height: 33%; align-items: center; justify-content: center; position: absolute; background: red; top: -${ctx.width/13}px; right: -${ctx.width/13}px; padding: 0px; border-radius: 50%; color: white; font-size: ${ctx.width/5}px; line-height: ${ctx.width/5}px; font-weight: bold;font-family:system-ui`;
     ctx.widgetDiv.appendChild(ctx.badgeDiv);
   };
 

@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.22
+ * oono JavaScript Library v1.0.23
  *
  * Copyright wecansync
  *
@@ -528,7 +528,7 @@ const destroy = (ctx) => {
     if(!!ctx.preview){
       return;
     }
-    setIframeUrl(ctx);
+    //setIframeUrl(ctx);
     
   }
 
@@ -636,6 +636,8 @@ const destroy = (ctx) => {
       return false;
     }
     ctx.options = data;
+    // debug
+    //ctx.options.iframeURL = "http://localhost:3000/oono";
     init(ctx);
     return ctx;
   }

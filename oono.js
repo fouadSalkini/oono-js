@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.21
+ * oono JavaScript Library v1.0.22
  *
  * Copyright wecansync
  *
@@ -187,6 +187,13 @@
   };
 
   const createIframe = (ctx) => {
+
+    const iframeClass = `.oono-iframe-${ctx.uuid}`;
+    const alreadyAdded = select$1(iframeClass);
+    if(alreadyAdded.length){
+      ctx.iframe = alreadyAdded[0];
+      return;
+    }
     // Create an iframe for the stories and set its attributes
     ctx.iframe = create("iframe", {});
     // open iframe
@@ -195,7 +202,7 @@
     }
 
     ctx.iframe.allow = "autoplay";
-    ctx.iframe.className = "oono-iframe";
+    ctx.iframe.className = `oono-iframe-${ctx.uuid}`;
     ctx.iframe.style.cssText = "position: fixed; top: 0px; background-color: rgb(0, 0, 0); left: 0px; width: 100vw; height: 100%; z-index: 999999999; border: none; outline: 0px; padding: 0px; margin: 0px; bottom: constant(safe-area-inset-bottom); bottom: env(safe-area-inset-bottom);";
     ctx.iframeStoriesDiv.appendChild(ctx.iframe);
     //ctx.widgetDiv.appendChild(ctx.iframeStoriesDiv);
@@ -339,17 +346,19 @@ const handleIframeLoaded = (ctx) => {
             ctx.iframeLoaded = true;
             if (ctx.openWindow) {
                 setTimeout(() => {
-                  ctx.container.forEach((el) => {
+                  console.log("loaded", ctx.container);
+                  select$1(".oono-widget").forEach((el) => {
                     el.style.opacity = "1";
                   });
-                  ctx.iframeStoriesDiv.style.display = "inline-block";
-                  ctx.iframe.contentWindow.postMessage('resume', `https://stories.${ctx.host}`);
+                  showIframe(ctx)
                 }, 200);
             }
 
         }
     });
 };
+
+
 
 const appendHtml = (ctx) => {
   ctx.elements.forEach((element) => {
@@ -367,7 +376,7 @@ const addEventListeners = (ctx) => {
           // Log the message sent from the iframe
           //console.log('Message received from iframeee:', event.data);
           if (event.data == 'Escape') {
-              console.log("exit window");
+              //console.log("exit window");
               closeWindow(ctx);
           }
       }
@@ -376,13 +385,9 @@ const addEventListeners = (ctx) => {
   // close window on escape
   document.onkeydown = (evt) => {
       //console.log("key down", evt)
-      if (evt.code == 'Escape') {
-          //console.log("close escape")
-          closeWindow(ctx);
-      }else{
-        ctx.iframe.contentWindow.postMessage(evt.code, `https://stories.${ctx.host}`);
+      // send event to iframe
+      ctx.iframe.contentWindow.postMessage(evt.code, `https://stories.${ctx.host}`);
 
-      }
   };
 
 };
@@ -529,10 +534,12 @@ const destroy = (ctx) => {
 
   const findParentContainer = (btn, className) => {
     var parent = btn.parentNode;
-
       // Loop until we find a parent element with the desired class or until we reach the top of the DOM
       while (parent !== null && !parent.classList.contains(className)) {
           parent = parent.parentNode;
+          if(parent.classList.contains(className)){
+            return parent;
+          }
       }
       
       return parent.parentNode;
@@ -541,17 +548,23 @@ const destroy = (ctx) => {
   const openWindow = (ctx, btn) => {
     if (ctx.iframeStoriesDiv) {
       var parentContainer = findParentContainer(btn, "oono-widget");
+      if(!parentContainer){
+        return console.error("no parent container found");
+      }
       parentContainer.style.opacity = "0.5";
         ctx.openWindow = true;
         if (ctx.iframeLoaded && ctx.sessionId) {
             setTimeout(() => {
               parentContainer.style.opacity = "1";
-              ctx.iframeStoriesDiv.style.display = "inline-block";
-              //console.log("trigger resume event");
-              ctx.iframe.contentWindow.postMessage('resume', `https://stories.${ctx.host}`);
+              showIframe(ctx);
             }, 200);
         }
     }
+  }
+
+  const showIframe = (ctx) => {
+    ctx.iframeStoriesDiv.style.display = "inline-block";
+    ctx.iframe.contentWindow.postMessage('resume', `https://stories.${ctx.host}`);
   }
 
   const makeSessionId = (length) => {
@@ -597,32 +610,12 @@ const destroy = (ctx) => {
 
   const doInit = async (ctx) => {
 
-    if(!ctx.options.tenantId){
-      console.error(`invalid tenant id `);
-      return false;
-    }
     
-    if(!ctx.options.widgetId){
-      console.error(`invalid widget id `);
-      return false;
-    }
-    ctx.selector = ctx.options.selector || "#" + ctx.options.containerId;
 
-    if(!ctx.selector){
-      console.error(`invalid selector ${ctx.selector}`);
-      return false;
-    }
-    ctx.uuid = ctx.options.widgetId;
-    ctx.elements = select$1(ctx.selector);
-    if(!ctx.elements){
-      console.error(`element does not exists: ${ctx.selector} `);
-      return false;
-    }    
-    
-    if(alreadyInitialized(ctx)){
-      console.warn(`the oono element has already been initialized`);
-      return;
-    }
+    // push the object to the objects list
+    ctx.elements[0].oonoStories = ctx;
+    oonoStories.items.push(ctx);
+
     filterUninitializedElements(ctx);
     ctx.count = ctx.elements.length;
     ctx.container = ctx.elements;
@@ -644,8 +637,36 @@ const destroy = (ctx) => {
     }
     ctx.options = data;
     init(ctx);
+    return ctx;
   }
 
+  const initSelector = (ctx) => {
+    if(!ctx.options.tenantId){
+      console.error(`invalid tenant id `);
+      return false;
+    }
+    
+    if(!ctx.options.widgetId){
+      console.error(`invalid widget id `);
+      return false;
+    }
+    ctx.selector = ctx.options.selector || "#" + ctx.options.containerId;
+
+    if(!ctx.selector){
+      console.error(`invalid selector ${ctx.selector}`);
+      return false;
+    }
+    ctx.uuid = ctx.options.widgetId;
+    ctx.elements = select$1(ctx.selector);
+    if(!ctx.elements){
+      console.error(`element does not exists: ${ctx.selector} `);
+      return false;
+    }    
+
+    return true;    
+   
+  }
+  oonoStories.items = [];
   function oonoStories(config) {
     if(typeof this === "undefined"){
       return false;
@@ -655,10 +676,20 @@ const destroy = (ctx) => {
     this.name = `oonoStories-${this.id}`;
     this.debounce = 0;
     var _this = this;
-    setTimeout(() => {
-      doInit(_this);
-    }, 500)
-   
+
+    let initStatus = initSelector(this);
+
+    if(!initStatus){
+      return;
+    }
+
+    if(alreadyInitialized(this)){
+      console.warn(`the oono element has already been initialized`);
+      return this.elements[0].oonoStories;
+    }
+    doInit(this);
+
+    return this;
   }
 
   return oonoStories;

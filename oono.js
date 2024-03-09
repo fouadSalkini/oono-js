@@ -429,7 +429,8 @@ const doRefresh = async (ctx)  => {
   }
   ctx.options.firstToWatch = data.firstToWatch;
   if(data.firstToWatch){
-    setStoryId(ctx, data.firstToWatch);
+    // removed due to an issue
+    //setStoryId(ctx, data.firstToWatch);
   }
   if(data.activeStoriesCount != ctx.options.activeStoriesCount || 
     data.unseenCount != ctx.options.unseenCount){

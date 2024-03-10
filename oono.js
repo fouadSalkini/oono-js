@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.25
+ * oono JavaScript Library v1.0.26
  *
  * Copyright wecansync
  *
@@ -203,7 +203,7 @@
 
     ctx.iframe.allow = "autoplay";
     ctx.iframe.className = `oono-iframe-${ctx.uuid}`;
-    ctx.iframe.style.cssText = "position: fixed; top: 0px; background-color: rgb(0, 0, 0); left: 0px; width: 100vw; height: 100%; z-index: 999999999; border: none; outline: 0px; padding: 0px; margin: 0px; bottom: constant(safe-area-inset-bottom); bottom: env(safe-area-inset-bottom);";
+    ctx.iframe.style.cssText = "transition: transform 0.2s ease, padding 0.2s ease; box-sizing:border-box; position: fixed; top: 0px; background-color: rgb(0, 0, 0); left: 0px; width: 100vw; height: 100%; z-index: 999999999; border: none; outline: 0px; padding: 0px; margin: 0px; bottom: constant(safe-area-inset-bottom); bottom: env(safe-area-inset-bottom);";
     ctx.iframeStoriesDiv.appendChild(ctx.iframe);
     //ctx.widgetDiv.appendChild(ctx.iframeStoriesDiv);
     document.body.appendChild(ctx.iframeStoriesDiv);
@@ -381,10 +381,15 @@ const addEventListeners = (ctx) => {
             if(event.data.dragend > 100){
               closeWindow(ctx);
             }
-            ctx.iframe.style.top = `0px`;
+            ctx.iframe.style.transform = `translateY(0px)`;
+            ctx.iframe.style.padding = `0px`;
+            return;
           }
-          if(event.data.drag > 0){
-            ctx.iframe.style.top = `${event.data.drag}px`;
+          const offset = event.data.drag;
+          if(offset > 0){
+            ctx.iframe.style.transform = `translateY(${offset}px)`;
+            ctx.iframe.style.paddingLeft = `${offset/10}px`;
+            ctx.iframe.style.paddingRight = `${offset/10}px`;
           }
       }
   });

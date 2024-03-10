@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.23
+ * oono JavaScript Library v1.0.25
  *
  * Copyright wecansync
  *
@@ -374,10 +374,17 @@ const addEventListeners = (ctx) => {
       // Check if the message is from the iframe
       if (event.source === ctx.iframe.contentWindow) {
           // Log the message sent from the iframe
-          //console.log('Message received from iframeee:', event.data);
           if (event.data == 'Escape') {
-              //console.log("exit window");
               closeWindow(ctx);
+          }
+          if(event.data.dragend){
+            if(event.data.dragend > 100){
+              closeWindow(ctx);
+            }
+            ctx.iframe.style.top = `0px`;
+          }
+          if(event.data.drag > 0){
+            ctx.iframe.style.top = `${event.data.drag}px`;
           }
       }
   });
@@ -638,7 +645,7 @@ const destroy = (ctx) => {
     }
     ctx.options = data;
     // debug
-    //ctx.options.iframeURL = "http://localhost:3000/oono";
+    //ctx.options.iframeURL = "http://192.168.1.106:3000/oono";
     init(ctx);
     return ctx;
   }

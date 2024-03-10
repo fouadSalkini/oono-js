@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.26
+ * oono JavaScript Library v1.0.27
  *
  * Copyright wecansync
  *
@@ -203,7 +203,7 @@
 
     ctx.iframe.allow = "autoplay";
     ctx.iframe.className = `oono-iframe-${ctx.uuid}`;
-    ctx.iframe.style.cssText = "transition: transform 0.2s ease, padding 0.2s ease; box-sizing:border-box; position: fixed; top: 0px; background-color: rgb(0, 0, 0); left: 0px; width: 100vw; height: 100%; z-index: 999999999; border: none; outline: 0px; padding: 0px; margin: 0px; bottom: constant(safe-area-inset-bottom); bottom: env(safe-area-inset-bottom);";
+    ctx.iframe.style.cssText = "transition: transform 0.6s ease, padding 0.6s ease; box-sizing:border-box; position: fixed; top: 0px; background-color: rgb(0, 0, 0); left: 0px; width: 100vw; height: 100%; z-index: 999999999; border: none; outline: 0px; padding: 0px; margin: 0px; bottom: constant(safe-area-inset-bottom); bottom: env(safe-area-inset-bottom);";
     ctx.iframeStoriesDiv.appendChild(ctx.iframe);
     //ctx.widgetDiv.appendChild(ctx.iframeStoriesDiv);
     document.body.appendChild(ctx.iframeStoriesDiv);

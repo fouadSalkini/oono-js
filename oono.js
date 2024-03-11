@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.28
+ * oono JavaScript Library v1.0.29
  *
  * Copyright wecansync
  *
@@ -676,7 +676,7 @@ const destroy = (ctx) => {
     }
     ctx.uuid = ctx.options.widgetId;
     ctx.elements = select$1(ctx.selector);
-    if(!ctx.elements){
+    if(!ctx.elements.length){
       console.error(`element does not exists: ${ctx.selector} `);
       return false;
     }    

@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.29
+ * oono JavaScript Library v1.0.30
  *
  * Copyright wecansync
  *
@@ -481,6 +481,7 @@ const destroy = (ctx) => {
       createOpenStoryBtn(ctx);
       createIframeStoriesDiv(ctx);
       createIframe(ctx);
+      createCssClass();
       appendHtml(ctx);
       addEventListeners(ctx);
       handleIframeLoaded(ctx);
@@ -537,7 +538,17 @@ const destroy = (ctx) => {
     };
   }
 
+  const createCssClass = () => {
+    var style = create('style', {});
+    style.type = 'text/css';
+    style.innerHTML = '.oono-open { overflow: hidden !important; }';
+    document.getElementsByTagName('head')[0].appendChild(style);
+  };
+
   const closeWindow = (ctx) => {
+    const body = select$1("html")[0];
+    body.classList.remove("oono-open");
+
     ctx.openWindow = false;
     ctx.iframeStoriesDiv.style.display = "none";
     checkUnseenStories(ctx);
@@ -567,6 +578,8 @@ const destroy = (ctx) => {
       if(!parentContainer){
         return console.error("no parent container found");
       }
+      const body = select$1("html")[0];
+      body.classList.add("oono-open");
       parentContainer.style.opacity = "0.5";
         ctx.openWindow = true;
         if (ctx.iframeLoaded && ctx.sessionId) {

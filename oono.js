@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.30
+ * oono JavaScript Library v1.0.31
  *
  * Copyright wecansync
  *
@@ -179,11 +179,11 @@
       return;
     }
     ctx.iframeStoriesDiv = create("div", {});
-    ctx.iframeStoriesDiv.className = "oono-iframe-stories";
+    ctx.iframeStoriesDiv.style.cssText = `overflow:hidden;box-sizing:border-box;position: fixed; top: 0px; left: 0px; width: 100vw; height: 100%; z-index: 999999999; border: none; outline: 0px; padding: 0px; margin: 0px; margin-left:auto; margin-right:auto; bottom: constant(safe-area-inset-bottom); bottom: env(safe-area-inset-bottom);`;
     ctx.iframeStoriesDiv.style.display = "none";
-    ctx.iframeStoriesDiv.style.position = "relative";
-    ctx.iframeStoriesDiv.style.boxSizing = "border-box";
-    ctx.iframeStoriesDiv.className = `oono-iframe-stories-${ctx.uuid}`;
+    ctx.iframeStoriesDiv.className = `oono-iframe-stories oono-iframe-stories-${ctx.uuid}`;
+
+    
   };
 
   const createIframe = (ctx) => {
@@ -203,7 +203,7 @@
 
     ctx.iframe.allow = "autoplay";
     ctx.iframe.className = `oono-iframe-${ctx.uuid}`;
-    ctx.iframe.style.cssText = "transition: top 0.07s ease, padding 0.1s ease; box-sizing:border-box; position: fixed; top: 0px; background-color: rgb(0, 0, 0); left: 0px; width: 100vw; height: 100%; z-index: 999999999; border: none; outline: 0px; padding: 0px; margin: 0px; bottom: constant(safe-area-inset-bottom); bottom: env(safe-area-inset-bottom);";
+    ctx.iframe.style.cssText = "box-sizing:border-box; top: 0px; left: 0px; width: 100%; height: 100%; border: none; outline: 0px; padding: 0px; margin: 0px;";
     ctx.iframeStoriesDiv.appendChild(ctx.iframe);
     //ctx.widgetDiv.appendChild(ctx.iframeStoriesDiv);
     document.body.appendChild(ctx.iframeStoriesDiv);
@@ -377,22 +377,23 @@ const addEventListeners = (ctx) => {
           if (event.data == 'Escape') {
               closeWindow(ctx);
           }
+          // return;
           if(event.data.dragend){
-            if(event.data.dragend > 100){
+            if(event.data.dragend > 200){
               closeWindow(ctx);
+              return;
+              
             }
-            ctx.iframe.style.top = `0px`;
-            // ctx.iframe.style.transform = `translateY(0px)`;
-            ctx.iframe.style.padding = `0px`;
-            return;
+            ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 0px, 0px)`;
+            ctx.iframeStoriesDiv.style.borderRadius = `0px`;
+            ctx.iframeStoriesDiv.style.transition = ``;
+           
           }
-          const offset = parseInt(event.data.drag);
+          const offset = parseInt(event.data.drag/1.4);
           if(offset > 0){
-            const padding = parseInt(offset/8);
-            ctx.iframe.style.top = `${offset}px`;
-            // ctx.iframe.style.transform = `translateY(${offset}px)`;
-            ctx.iframe.style.paddingLeft = `${padding}px`;
-            ctx.iframe.style.paddingRight = `${padding}px`;
+            const scale = 1 - offset*0.6/800;
+            ctx.iframeStoriesDiv.style.transform = `translate3d(0px, ${offset}px, 0px) scale(${scale})`;
+            ctx.iframeStoriesDiv.style.borderRadius = `10px`;
           }
       }
   });
@@ -550,7 +551,12 @@ const destroy = (ctx) => {
     body.classList.remove("oono-open");
 
     ctx.openWindow = false;
-    ctx.iframeStoriesDiv.style.display = "none";
+    ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 2000px, 0px)`;
+    ctx.iframeStoriesDiv.style.transition = `transform ease 1s`;
+    setTimeout(() => {
+      ctx.iframeStoriesDiv.style.display = "none";
+      ctx.iframeStoriesDiv.style.transition = ``;
+    }, 1000)
     checkUnseenStories(ctx);
     if(!!ctx.preview){
       return;
@@ -594,6 +600,7 @@ const destroy = (ctx) => {
   const showIframe = (ctx) => {
     ctx.iframeStoriesDiv.style.display = "inline-block";
     ctx.iframe.contentWindow.postMessage('resume', `https://stories.${ctx.host}`);
+    ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 0px, 0px)`;
   }
 
   const makeSessionId = (length) => {

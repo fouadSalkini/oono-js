@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.31
+ * oono JavaScript Library v1.0.32
  *
  * Copyright wecansync
  *
@@ -176,6 +176,7 @@
     const alreadyAdded = select$1(iframeClass);
     if(alreadyAdded.length){
       ctx.iframeStoriesDiv = alreadyAdded[0];
+      ctx.iframeLoaded = true;
       return;
     }
     ctx.iframeStoriesDiv = create("div", {});
@@ -470,8 +471,12 @@ const refresh = async (ctx)  => {
 }
 
 const destroy = (ctx) => {
-  ctx.container.dataset.initialized = false;
-  return ctx.container.innerHTML = "";
+  for(var i = 0; i< ctx.elements.length; i++ ){
+    ctx.elements[i].dataset.initialized = false;
+    ctx.elements[i].innerHTML = "";
+  }
+  
+  return;
 }
   
   const init =  (ctx, allowRefresh = true) => {
@@ -555,6 +560,7 @@ const destroy = (ctx) => {
     ctx.iframeStoriesDiv.style.transition = `transform ease 1s`;
     setTimeout(() => {
       ctx.iframeStoriesDiv.style.display = "none";
+      ctx.iframeStoriesDiv.style.transform = ``;
       ctx.iframeStoriesDiv.style.transition = ``;
     }, 1000)
     checkUnseenStories(ctx);
@@ -588,6 +594,7 @@ const destroy = (ctx) => {
       body.classList.add("oono-open");
       parentContainer.style.opacity = "0.5";
         ctx.openWindow = true;
+        console.log(ctx);
         if (ctx.iframeLoaded && ctx.sessionId) {
             setTimeout(() => {
               parentContainer.style.opacity = "1";
@@ -674,6 +681,7 @@ const destroy = (ctx) => {
     ctx.options = data;
     // debug
     //ctx.options.iframeURL = "http://192.168.1.106:3000/oono";
+    
     init(ctx);
     return ctx;
   }

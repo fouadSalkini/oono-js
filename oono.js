@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.32
+ * oono JavaScript Library v1.0.33
  *
  * Copyright wecansync
  *
@@ -347,7 +347,7 @@ const handleIframeLoaded = (ctx) => {
             ctx.iframeLoaded = true;
             if (ctx.openWindow) {
                 setTimeout(() => {
-                  console.log("loaded", ctx.container);
+                  // console.log("loaded", ctx.container);
                   select$1(".oono-widget").forEach((el) => {
                     el.style.opacity = "1";
                   });
@@ -403,7 +403,7 @@ const addEventListeners = (ctx) => {
   document.onkeydown = (evt) => {
       //console.log("key down", evt)
       // send event to iframe
-      ctx.iframe.contentWindow.postMessage(evt.code, `https://stories.${ctx.host}`);
+      ctx.iframe.contentWindow.postMessage(evt.code, `${ctx.options.iframeURL}`);
 
   };
 
@@ -594,7 +594,7 @@ const destroy = (ctx) => {
       body.classList.add("oono-open");
       parentContainer.style.opacity = "0.5";
         ctx.openWindow = true;
-        console.log(ctx);
+        // console.log(ctx);
         if (ctx.iframeLoaded && ctx.sessionId) {
             setTimeout(() => {
               parentContainer.style.opacity = "1";
@@ -606,7 +606,7 @@ const destroy = (ctx) => {
 
   const showIframe = (ctx) => {
     ctx.iframeStoriesDiv.style.display = "inline-block";
-    ctx.iframe.contentWindow.postMessage('resume', `https://stories.${ctx.host}`);
+    ctx.iframe.contentWindow.postMessage('resume', `${ctx.options.iframeURL}`);
     ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 0px, 0px)`;
   }
 

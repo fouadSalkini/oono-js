@@ -206,8 +206,8 @@
     ctx.iframe.className = `oono-iframe-${ctx.uuid}`;
     ctx.iframe.style.cssText = "box-sizing:border-box; top: 0px; left: 0px; width: 100%; height: 100%; border: none; outline: 0px; padding: 0px; margin: 0px;";
     ctx.iframeStoriesDiv.appendChild(ctx.iframe);
-    //ctx.widgetDiv.appendChild(ctx.iframeStoriesDiv);
-    document.body.appendChild(ctx.iframeStoriesDiv);
+    // ctx.widgetDiv.appendChild(ctx.iframeStoriesDiv);
+    // document.body.appendChild(ctx.iframeStoriesDiv);
   };
 
   
@@ -338,7 +338,8 @@ const handleIframeLoaded = (ctx) => {
         return;
     }
     // iframe load listener
-    ctx.iframe.addEventListener("load", function () {
+    ctx.iframe.onload = function () {
+        console.log("load ifraeme", ctx.iframe);
         if (!this.src || this.src == window.location.href) {
             return;
         }
@@ -356,7 +357,7 @@ const handleIframeLoaded = (ctx) => {
             }
 
         }
-    });
+    };
 };
 
 
@@ -367,6 +368,8 @@ const appendHtml = (ctx) => {
     element.appendChild(ctx.widgetDiv.cloneNode(true));
     element.querySelector(".oono-open-story-button").onclick = ctx.openStoryButton.onclick;
   })
+  // ctx.elements[0].appendChild(ctx.iframeStoriesDiv);
+  document.body.appendChild(ctx.iframeStoriesDiv);
 }
 
 const addEventListeners = (ctx) => {
@@ -383,12 +386,10 @@ const addEventListeners = (ctx) => {
             if(event.data.dragend > 200){
               closeWindow(ctx);
               return;
-              
             }
             ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 0px, 0px)`;
             ctx.iframeStoriesDiv.style.borderRadius = `0px`;
             ctx.iframeStoriesDiv.style.transition = ``;
-           
           }
           const offset = parseInt(event.data.drag/1.4);
           if(offset > 0){
@@ -488,9 +489,9 @@ const destroy = (ctx) => {
       createIframeStoriesDiv(ctx);
       createIframe(ctx);
       createCssClass();
+      handleIframeLoaded(ctx);
       appendHtml(ctx);
       addEventListeners(ctx);
-      handleIframeLoaded(ctx);
       setTimeout(() => {
           if (ctx.options.activeStoriesCount) {
               checkUnseenStories(ctx);
@@ -556,12 +557,20 @@ const destroy = (ctx) => {
     body.classList.remove("oono-open");
 
     ctx.openWindow = false;
-    ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 2000px, 0px)`;
-    ctx.iframeStoriesDiv.style.transition = `transform ease 1s`;
+    var top = ctx.elements[0].querySelector(".oono-widget").offsetTop;
+    var left = ctx.elements[0].querySelector(".oono-widget").offsetTop;
+    var w = ctx.elements[0].querySelector(".oono-widget").offsetWidth;
+    var h = ctx.elements[0].querySelector(".oono-widget").offsetHeight;
+    ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(${top + h/2}px,${left + w/2}px, 0)`;
+    ctx.iframeStoriesDiv.style.width = `0`;
+    ctx.iframeStoriesDiv.style.height = `0`;
+    ctx.iframeStoriesDiv.style.transition = `transform ease 0.7s, width ease 1s, height ease 1s `;
     setTimeout(() => {
-      ctx.iframeStoriesDiv.style.display = "none";
-      ctx.iframeStoriesDiv.style.transform = ``;
+      // ctx.iframeStoriesDiv.style.display = "none";
+      // ctx.iframeStoriesDiv.style.transform = ``;
       ctx.iframeStoriesDiv.style.transition = ``;
+      // ctx.iframeStoriesDiv.style.width = `100%`;
+    // ctx.iframeStoriesDiv.style.height = `100%`;
     }, 1000)
     checkUnseenStories(ctx);
     if(!!ctx.preview){
@@ -594,7 +603,7 @@ const destroy = (ctx) => {
       body.classList.add("oono-open");
       parentContainer.style.opacity = "0.5";
         ctx.openWindow = true;
-        // console.log(ctx);
+        console.log("iframe loaded", ctx.iframeLoaded);
         if (ctx.iframeLoaded && ctx.sessionId) {
             setTimeout(() => {
               parentContainer.style.opacity = "1";

@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.34
+ * oono JavaScript Library v1.0.36
  *
  * Copyright wecansync
  *
@@ -564,16 +564,22 @@ const destroy = (ctx) => {
     var top = ctx.clickOffset.y ;//+ h/2;
     var left = ctx.clickOffset.x ;//+ w/2;
 
-    ctx.iframeStoriesDiv.style.transform = `translate3d(${left}px,${top}px, 0)`;
-    ctx.iframeStoriesDiv.style.width = `0`;
-    ctx.iframeStoriesDiv.style.height = `0`;
+    ctx.iframeStoriesDiv.style.width = `100vw`;
+    ctx.iframeStoriesDiv.style.height = `100vw`;
     ctx.iframe.style.width = `100vw`;
     ctx.iframe.style.height = `100vh`;
-    ctx.iframeStoriesDiv.style.transition = `transform ease 0.3s, width  ease 0.3s, height  ease 0.3s`;
-    ctx.iframeStoriesDiv.style.borderRadius = `50%`;
+    ctx.iframeStoriesDiv.style.opacity = `0.1`;
+    setTimeout(() => {
+      ctx.iframeStoriesDiv.style.transform = `translate3d(${left}px,${top}px, 0)`;
+      ctx.iframeStoriesDiv.style.transition = `transform ease 0.2s, width  ease 0.2s, height ease 0.2s`;
+      ctx.iframeStoriesDiv.style.width = `0`;
+      ctx.iframeStoriesDiv.style.height = `0`;
+      ctx.iframeStoriesDiv.style.borderRadius = `50%`;
+    }, 100)
     setTimeout(() => {
       ctx.iframeStoriesDiv.style.display = "none";
       ctx.iframeStoriesDiv.style.transform = ``;
+      ctx.iframeStoriesDiv.style.opacity = `1`;
       ctx.iframeStoriesDiv.style.transition = ``;
       ctx.iframeStoriesDiv.style.width = `100%`;
       ctx.iframeStoriesDiv.style.height = `100%`;

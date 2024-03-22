@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.33
+ * oono JavaScript Library v1.0.34
  *
  * Copyright wecansync
  *
@@ -30,6 +30,7 @@
     host: defaultHost,
     width: widgetWidth,
     height: widgetHeight,
+    clickOffset: {}
  }
  
  ;
@@ -135,8 +136,9 @@
     }
     // Add click event to show the iframe stories
     ctx.openStoryButton.onclick = function (e) {
-      //console.log("openStory btn clicked", ctx.container)
-        openWindow(ctx, this);
+      ctx.clickOffset.x = e.clientX;
+      ctx.clickOffset.y = e.clientY;
+      openWindow(ctx, this);
     };
     // Check if ctx.logoURL is provided in ctx.options
     if (ctx.options.logoURL) {
@@ -339,7 +341,6 @@ const handleIframeLoaded = (ctx) => {
     }
     // iframe load listener
     ctx.iframe.onload = function () {
-        console.log("load ifraeme", ctx.iframe);
         if (!this.src || this.src == window.location.href) {
             return;
         }
@@ -557,20 +558,26 @@ const destroy = (ctx) => {
     body.classList.remove("oono-open");
 
     ctx.openWindow = false;
-    var top = ctx.elements[0].querySelector(".oono-widget").offsetTop;
-    var left = ctx.elements[0].querySelector(".oono-widget").offsetTop;
     var w = ctx.elements[0].querySelector(".oono-widget").offsetWidth;
     var h = ctx.elements[0].querySelector(".oono-widget").offsetHeight;
-    ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(${top + h/2}px,${left + w/2}px, 0)`;
+
+    var top = ctx.clickOffset.y ;//+ h/2;
+    var left = ctx.clickOffset.x ;//+ w/2;
+
+    ctx.iframeStoriesDiv.style.transform = `translate3d(${left}px,${top}px, 0)`;
     ctx.iframeStoriesDiv.style.width = `0`;
     ctx.iframeStoriesDiv.style.height = `0`;
-    ctx.iframeStoriesDiv.style.transition = `transform ease 0.7s, width ease 1s, height ease 1s `;
+    ctx.iframe.style.width = `100vw`;
+    ctx.iframe.style.height = `100vh`;
+    ctx.iframeStoriesDiv.style.transition = `transform ease 0.3s, width  ease 0.3s, height  ease 0.3s`;
+    ctx.iframeStoriesDiv.style.borderRadius = `50%`;
     setTimeout(() => {
-      // ctx.iframeStoriesDiv.style.display = "none";
-      // ctx.iframeStoriesDiv.style.transform = ``;
+      ctx.iframeStoriesDiv.style.display = "none";
+      ctx.iframeStoriesDiv.style.transform = ``;
       ctx.iframeStoriesDiv.style.transition = ``;
-      // ctx.iframeStoriesDiv.style.width = `100%`;
-    // ctx.iframeStoriesDiv.style.height = `100%`;
+      ctx.iframeStoriesDiv.style.width = `100%`;
+      ctx.iframeStoriesDiv.style.height = `100%`;
+      ctx.iframeStoriesDiv.style.borderRadius = `0`;
     }, 1000)
     checkUnseenStories(ctx);
     if(!!ctx.preview){
@@ -603,7 +610,6 @@ const destroy = (ctx) => {
       body.classList.add("oono-open");
       parentContainer.style.opacity = "0.5";
         ctx.openWindow = true;
-        console.log("iframe loaded", ctx.iframeLoaded);
         if (ctx.iframeLoaded && ctx.sessionId) {
             setTimeout(() => {
               parentContainer.style.opacity = "1";
@@ -672,6 +678,7 @@ const destroy = (ctx) => {
     ctx.count = ctx.elements.length;
     ctx.container = ctx.elements;
     addInitialized(ctx);
+    ctx.clickOffset = {};
     ctx.host = typeof ctx.options.host !== "undefined" ? ctx.options.host : defaultHost;
     ctx.width = typeof ctx.options.width !== "undefined" ? ctx.options.width : widgetWidth;
     ctx.height = typeof ctx.options.height !== "undefined" ? ctx.options.height : widgetHeight;

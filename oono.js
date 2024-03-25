@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.36
+ * oono JavaScript Library v1.0.37
  *
  * Copyright wecansync
  *
@@ -103,6 +103,19 @@
         ctx.widgetDiv.style.height = `${ctx.width}px`;
         ctx.widgetDiv.style.width = `${ctx.height}px`;
     }
+
+  };
+
+  const createRing = (ctx) => {
+
+    var svg = create("div", {});
+    svg.className = "oono-svg-stroke";
+    var inner = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="enable-background:new -580 439 577.9 194;"
+                  xml:space="preserve">  
+                <circle cx="50" cy="50" r="46" />
+              </svg>`;
+    svg.innerHTML = inner;
+    ctx.widgetDiv.appendChild(svg);
   };
 
   const createBadgeDiv = (ctx) => {
@@ -239,6 +252,7 @@
     } else {
         hideRing(ctx);
     }
+    
 };
 
 const showRing = (ctx, badge) => {
@@ -247,13 +261,19 @@ const showRing = (ctx, badge) => {
     var badgeDiv = el.querySelector(".oono-badge");
 
     // showing ring
-    widgetDiv.style.borderColor = "red";
+    // widgetDiv.style.borderColor = "red";
+    widgetDiv.style.borderColor = "transparent";
+    widgetDiv.querySelector(".oono-svg-stroke").classList.add("active");
     widgetDiv.style.borderWidth = `${ctx.width/20}px`;
     widgetDiv.style.borderStyle = "solid";
+    setTimeout(() => {
+      // show badge
+      badgeDiv.style.display = "flex";
+      badgeDiv.innerHTML = badge;
+    }, [4000]);
 
-    // show badge
-    badgeDiv.style.display = "flex";
-    badgeDiv.innerHTML = badge;
+
+    
   });
  
 };
@@ -266,6 +286,8 @@ const hideRing = (ctx) => {
 
     // hiding ring
     widgetDiv.style.borderColor = "lightgrey";
+    widgetDiv.style.borderColor = "transparent";
+    widgetDiv.querySelector(".oono-svg-stroke").classList.remove("active");
     widgetDiv.style.borderWidth = `${ctx.width/30}px`;
     widgetDiv.style.borderStyle = "solid";
 
@@ -484,12 +506,13 @@ const destroy = (ctx) => {
   const init =  (ctx, allowRefresh = true) => {
     // return new Promise(function ($return, $error) {
       createMainWidget(ctx);
+      createRing(ctx);
       createBadgeDiv(ctx);
       createIframeBtnDiv(ctx);
       createOpenStoryBtn(ctx);
       createIframeStoriesDiv(ctx);
       createIframe(ctx);
-      createCssClass();
+      createCssClass(ctx);
       handleIframeLoaded(ctx);
       appendHtml(ctx);
       addEventListeners(ctx);
@@ -546,10 +569,71 @@ const destroy = (ctx) => {
     };
   }
 
-  const createCssClass = () => {
+  const createCssClass = (ctx) => {
     var style = create('style', {});
     style.type = 'text/css';
-    style.innerHTML = '.oono-open { overflow: hidden !important; }';
+    style.innerHTML = `
+      .oono-open { overflow: hidden !important; }
+
+      .oono-svg-stroke{
+        position: absolute;
+        width: calc(100% + ${ctx.width/10}px);
+        height: calc(100% + ${ctx.width/10}px);
+        top: -${ctx.width/20}px;
+        left: -${ctx.width/20}px;
+        box-sizing: border-box;
+        display:none;
+      }
+      .oono-svg-stroke.active{
+        display:block;
+      }
+      .oono-svg-stroke svg{
+        fill:none;
+        stroke:red;
+        stroke-linecap: round;
+        stroke-width:${ctx.width/20}px;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 0;
+        animation: stroke-draw 4s ease-in-out alternate; 
+      }
+
+      .oono-badge{
+        animation: bubble .5s ease-out alternate; 
+      }
+
+      @keyframes stroke-draw {
+  
+        0%{
+          stroke:red;
+          transform:rotate(180deg);
+          stroke-dasharray: 12;
+          stroke-dashoffset: 50;
+        }
+        50%{ 
+          stroke-dashoffset: 100;
+          stroke-dasharray: 16;
+        }
+        100%{ 
+          stroke:red;
+          stroke-dasharray: 1;
+          stroke-dashoffset: 0;
+        }
+        
+      }
+
+      @keyframes bubble {
+  
+        0%{
+          transform: scale(0);
+        }
+        75%{
+          transform: scale(1.1);
+        }
+        100%{ 
+          transform: scale(1);
+        }
+      }
+    `;
     document.getElementsByTagName('head')[0].appendChild(style);
   };
 

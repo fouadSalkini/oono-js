@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.38
+ * oono JavaScript Library v1.0.39
  *
  * Copyright wecansync
  *
@@ -601,24 +601,24 @@ const destroy = (ctx) => {
         animation: bubble .5s ease-out alternate; 
       }
 
+      .close-window{
+        animation: close-window .5s ease-in-out alternate; 
+      }
+
       @keyframes stroke-draw {
-  
         from{
           stroke:red;
           stroke-dasharray: 12;
           stroke-dashoffset: 0;
         }
-        
         to{ 
           stroke:red;
           stroke-dasharray: 1;
           stroke-dashoffset: 50;
         }
-        
       }
 
       @keyframes bubble {
-  
         0%{
           transform: scale(0);
         }
@@ -628,6 +628,28 @@ const destroy = (ctx) => {
         100%{ 
           transform: scale(1);
         }
+      }
+
+      @keyframes close-window {
+        0%{
+          width:100%;
+          height:100%;
+          border-radius:50%;
+          opacity:1;
+        }
+        25%{ 
+          width:100px;
+          height:100px;
+          opacity:0.2;
+          transform:translate(90%, 90%);
+        }
+        100%{ 
+          width:0;
+          height:0;
+          opacity: 0;
+          border-radius:50%;
+        }
+        
       }
     `;
     document.getElementsByTagName('head')[0].appendChild(style);
@@ -644,27 +666,19 @@ const destroy = (ctx) => {
     var top = ctx.clickOffset.y ;//+ h/2;
     var left = ctx.clickOffset.x ;//+ w/2;
 
-    ctx.iframeStoriesDiv.style.width = `100vw`;
-    ctx.iframeStoriesDiv.style.height = `100vw`;
+    ctx.iframeStoriesDiv.classList.add("close-window");
     ctx.iframe.style.width = `100vw`;
     ctx.iframe.style.height = `100vh`;
-    ctx.iframeStoriesDiv.style.opacity = `0.1`;
-    setTimeout(() => {
+    // setTimeout(() => {
       ctx.iframeStoriesDiv.style.transform = `translate3d(${left}px,${top}px, 0)`;
-      ctx.iframeStoriesDiv.style.transition = `transform ease 0.2s, width  ease 0.2s, height ease 0.2s`;
-      ctx.iframeStoriesDiv.style.width = `0`;
-      ctx.iframeStoriesDiv.style.height = `0`;
-      ctx.iframeStoriesDiv.style.borderRadius = `50%`;
-    }, 100)
+      ctx.iframeStoriesDiv.style.transition = `transform ease 0.1s`;
+    // }, 10)
     setTimeout(() => {
+      ctx.iframeStoriesDiv.classList.remove("close-window");
       ctx.iframeStoriesDiv.style.display = "none";
       ctx.iframeStoriesDiv.style.transform = ``;
-      ctx.iframeStoriesDiv.style.opacity = `1`;
       ctx.iframeStoriesDiv.style.transition = ``;
-      ctx.iframeStoriesDiv.style.width = `100%`;
-      ctx.iframeStoriesDiv.style.height = `100%`;
-      ctx.iframeStoriesDiv.style.borderRadius = `0`;
-    }, 1000)
+    }, 500)
     checkUnseenStories(ctx);
     if(!!ctx.preview){
       return;

@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.37
+ * oono JavaScript Library v1.0.38
  *
  * Copyright wecansync
  *
@@ -603,20 +603,16 @@ const destroy = (ctx) => {
 
       @keyframes stroke-draw {
   
-        0%{
+        from{
           stroke:red;
-          transform:rotate(180deg);
           stroke-dasharray: 12;
-          stroke-dashoffset: 50;
+          stroke-dashoffset: 0;
         }
-        50%{ 
-          stroke-dashoffset: 100;
-          stroke-dasharray: 16;
-        }
-        100%{ 
+        
+        to{ 
           stroke:red;
           stroke-dasharray: 1;
-          stroke-dashoffset: 0;
+          stroke-dashoffset: 50;
         }
         
       }

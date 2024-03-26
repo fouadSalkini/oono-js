@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.41
+ * oono JavaScript Library v1.0.42
  *
  * Copyright wecansync
  *
@@ -634,18 +634,18 @@ const destroy = (ctx) => {
           stroke-dashoffset: 0;
         }
         25%{
-          stroke-dashoffset: 250;
+          stroke-dashoffset: 50;
         }
         50%{
           stroke-dasharray: 12;
-          stroke-dashoffset: 0;
+          stroke-dashoffset: 100;
         }
         75%{
-          stroke-dashoffset: 100;
+          stroke-dashoffset: 200;
         }
         to{ 
           stroke-dasharray: 1;
-          stroke-dashoffset: 0;
+          stroke-dashoffset: 500;
         }
       }
 

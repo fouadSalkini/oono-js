@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.44
+ * oono JavaScript Library v1.0.45
  *
  * Copyright wecansync
  *
@@ -293,7 +293,7 @@ const showRing = (ctx, badge, justUnseen) => {
       // show badge
       badgeDiv.style.display = "flex";
       
-    }, [2500]);
+    }, [2000]);
     
   });
  

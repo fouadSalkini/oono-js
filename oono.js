@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.40
+ * oono JavaScript Library v1.0.41
  *
  * Copyright wecansync
  *
@@ -21,6 +21,7 @@
   defaultTenant = "oono",
   defaultContainerId = "oono-container",
   defaultHost = "oono.ai",
+  ringInterval = null,
 
   defaultConfig = { 
     containerId: defaultContainerId, 
@@ -247,7 +248,16 @@
         (typeof data === "undefined" || data.unseenCount) &&
         ctx.options.activeStoriesCount
     ) {
-      showRing(ctx, data?.unseenCount);
+      ctx.unseenCount = data?.unseenCount;
+      showRing(ctx, ctx.unseenCount, true);
+      if(!ctx.ringInterval){
+        showRing(ctx, ctx.unseenCount);
+        ctx.ringInterval = setInterval(() => {
+          showRing(ctx, ctx.unseenCount);
+        }, refreshTimer);
+      }
+      
+      
 
     } else {
         hideRing(ctx);
@@ -255,24 +265,35 @@
     
 };
 
-const showRing = (ctx, badge) => {
+const showRing = (ctx, badge, justUnseen) => {
+
   ctx.elements.forEach((el) => {
     var widgetDiv = el.querySelector(".oono-widget");
     var badgeDiv = el.querySelector(".oono-badge");
 
+    badgeDiv.innerHTML = badge;
+    if(justUnseen){
+      return false;
+    }
+    badgeDiv.style.display = "none";
+    
+
     // showing ring
     // widgetDiv.style.borderColor = "red";
     widgetDiv.style.borderColor = "transparent";
-    widgetDiv.querySelector(".oono-svg-stroke").classList.add("active");
     widgetDiv.style.borderWidth = `${ctx.width/20}px`;
     widgetDiv.style.borderStyle = "solid";
+    
+    widgetDiv.querySelector(".oono-svg-stroke").classList.remove("active");
+    setTimeout(() => {
+      widgetDiv.querySelector(".oono-svg-stroke").classList.add("active");
+    }, 10);
+    
     setTimeout(() => {
       // show badge
       badgeDiv.style.display = "flex";
-      badgeDiv.innerHTML = badge;
+      
     }, [4000]);
-
-
     
   });
  
@@ -280,13 +301,15 @@ const showRing = (ctx, badge) => {
 
 const hideRing = (ctx) => {
 
+  clearInterval(ctx.ringInterval);
+  ctx.ringInterval = null;
+
   ctx.elements.forEach((el) => {
     var widgetDiv = el.querySelector(".oono-widget");
     var badgeDiv = el.querySelector(".oono-badge");
 
     // hiding ring
     widgetDiv.style.borderColor = "lightgrey";
-    widgetDiv.style.borderColor = "transparent";
     widgetDiv.querySelector(".oono-svg-stroke").classList.remove("active");
     widgetDiv.style.borderWidth = `${ctx.width/30}px`;
     widgetDiv.style.borderStyle = "solid";
@@ -593,7 +616,7 @@ const destroy = (ctx) => {
         stroke-linecap: round;
         stroke-width:${ctx.width/20}px;
         stroke-dasharray: 1;
-        stroke-dashoffset: 0;
+        stroke-dashoffset: 100;
         animation: stroke-draw 4s ease-in-out alternate; 
       }
 
@@ -606,15 +629,23 @@ const destroy = (ctx) => {
       }
 
       @keyframes stroke-draw {
-        from{
-          stroke:red;
+        0%{
+          stroke-dasharray: 50;
+          stroke-dashoffset: 0;
+        }
+        25%{
+          stroke-dashoffset: 250;
+        }
+        50%{
           stroke-dasharray: 12;
           stroke-dashoffset: 0;
         }
+        75%{
+          stroke-dashoffset: 100;
+        }
         to{ 
-          stroke:red;
           stroke-dasharray: 1;
-          stroke-dashoffset: 50;
+          stroke-dashoffset: 0;
         }
       }
 
@@ -797,6 +828,7 @@ const destroy = (ctx) => {
     addInitialized(ctx);
     ctx.clickOffset = {};
     ctx.host = typeof ctx.options.host !== "undefined" ? ctx.options.host : defaultHost;
+    ctx.ringInterval = ringInterval;
     ctx.width = typeof ctx.options.width !== "undefined" ? ctx.options.width : widgetWidth;
     ctx.height = typeof ctx.options.height !== "undefined" ? ctx.options.height : widgetHeight;
     ctx.autoRefresh = typeof ctx.options.autoRefresh !== "undefined" ? ctx.options.autoRefresh : autoRefresh;

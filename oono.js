@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.39
+ * oono JavaScript Library v1.0.40
  *
  * Copyright wecansync
  *
@@ -632,22 +632,36 @@ const destroy = (ctx) => {
 
       @keyframes close-window {
         0%{
-          width:100%;
-          height:100%;
+          
           border-radius:50%;
-          opacity:1;
+          opacity:0.2;
+          transform: translate(0, 20%);
         }
         25%{ 
-          width:100px;
-          height:100px;
-          opacity:0.2;
-          transform:translate(90%, 90%);
+         
+          opacity:0.15;
+          border-radius:50%;
+          transform: translate(0, 30%);
+        }
+        50%{ 
+          
+          opacity:0.10;
+          border-radius:50%;
+          transform: translate(0, 20%);
+        }
+        75%{ 
+          
+          opacity:0.05;
+          border-radius:50%;
+          
+
         }
         100%{ 
           width:0;
           height:0;
           opacity: 0;
           border-radius:50%;
+          
         }
         
       }
@@ -669,10 +683,13 @@ const destroy = (ctx) => {
     ctx.iframeStoriesDiv.classList.add("close-window");
     ctx.iframe.style.width = `100vw`;
     ctx.iframe.style.height = `100vh`;
+
+    ctx.iframeStoriesDiv.style.width = `100vw`;
+    ctx.iframeStoriesDiv.style.height = `100vw`;
     // setTimeout(() => {
       ctx.iframeStoriesDiv.style.transform = `translate3d(${left}px,${top}px, 0)`;
-      ctx.iframeStoriesDiv.style.transition = `transform ease 0.1s`;
-    // }, 10)
+      // ctx.iframeStoriesDiv.style.transition = `transform ease 0.1s`;
+    // }, 800)
     setTimeout(() => {
       ctx.iframeStoriesDiv.classList.remove("close-window");
       ctx.iframeStoriesDiv.style.display = "none";

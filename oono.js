@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.42
+ * oono JavaScript Library v1.0.43
  *
  * Copyright wecansync
  *
@@ -621,31 +621,20 @@ const destroy = (ctx) => {
       }
 
       .oono-badge{
-        animation: bubble .5s ease-out alternate; 
+        animation: bubble .2s ease-out alternate; 
       }
 
       .close-window{
-        animation: close-window .5s ease-in-out alternate; 
+        animation: close-window .3s ease-in-out alternate; 
       }
 
       @keyframes stroke-draw {
-        0%{
-          stroke-dasharray: 50;
-          stroke-dashoffset: 0;
+        from{
+          stroke-dasharray: 20;
         }
-        25%{
-          stroke-dashoffset: 50;
-        }
-        50%{
-          stroke-dasharray: 12;
-          stroke-dashoffset: 100;
-        }
-        75%{
-          stroke-dashoffset: 200;
-        }
+       
         to{ 
           stroke-dasharray: 1;
-          stroke-dashoffset: 500;
         }
       }
 
@@ -726,7 +715,7 @@ const destroy = (ctx) => {
       ctx.iframeStoriesDiv.style.display = "none";
       ctx.iframeStoriesDiv.style.transform = ``;
       ctx.iframeStoriesDiv.style.transition = ``;
-    }, 500)
+    }, 300)
     checkUnseenStories(ctx);
     if(!!ctx.preview){
       return;

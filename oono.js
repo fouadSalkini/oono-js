@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.43
+ * oono JavaScript Library v1.0.44
  *
  * Copyright wecansync
  *
@@ -293,7 +293,7 @@ const showRing = (ctx, badge, justUnseen) => {
       // show badge
       badgeDiv.style.display = "flex";
       
-    }, [4000]);
+    }, [2500]);
     
   });
  
@@ -614,14 +614,14 @@ const destroy = (ctx) => {
         fill:none;
         stroke:red;
         stroke-linecap: round;
-        stroke-width:${ctx.width/20}px;
+        stroke-width:${ctx.width/15}px;
         stroke-dasharray: 1;
-        stroke-dashoffset: 100;
-        animation: stroke-draw 4s ease-in-out alternate; 
+        stroke-dashoffset: 0;
+        animation: stroke-draw 3s ease-in-out alternate; 
       }
 
       .oono-badge{
-        animation: bubble .2s ease-out alternate; 
+        animation: bubble .3s ease-in-out alternate; 
       }
 
       .close-window{
@@ -631,10 +631,12 @@ const destroy = (ctx) => {
       @keyframes stroke-draw {
         from{
           stroke-dasharray: 20;
+          stroke-width:${ctx.width/20}px;
         }
        
         to{ 
           stroke-dasharray: 1;
+          stroke-width:${ctx.width/15}px;
         }
       }
 
@@ -642,8 +644,11 @@ const destroy = (ctx) => {
         0%{
           transform: scale(0);
         }
+        50%{
+          transform: scale(1.8);
+        }
         75%{
-          transform: scale(1.1);
+          transform: scale(0.4);
         }
         100%{ 
           transform: scale(1);

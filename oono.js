@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.45
+ * oono JavaScript Library v1.0.46
  *
  * Copyright wecansync
  *
@@ -618,6 +618,7 @@ const destroy = (ctx) => {
         stroke-dasharray: 1;
         stroke-dashoffset: 0;
         animation: stroke-draw 3s ease-in-out alternate; 
+        transform: rotate(-1000deg);
       }
 
       .oono-badge{
@@ -629,14 +630,23 @@ const destroy = (ctx) => {
       }
 
       @keyframes stroke-draw {
-        from{
+        0%{
           stroke-dasharray: 20;
           stroke-width:${ctx.width/20}px;
+          transform: rotate(0deg);
         }
-       
-        to{ 
+        25%{
+        }
+        50%{
+        }
+        75%{
+          transform: rotate(-1000deg);
+        }
+        100%{ 
           stroke-dasharray: 1;
           stroke-width:${ctx.width/15}px;
+          
+          
         }
       }
 

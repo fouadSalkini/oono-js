@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.48
+ * oono JavaScript Library v1.0.49
  *
  * Copyright wecansync
  *
@@ -445,14 +445,13 @@ const addEventListeners = (ctx) => {
           }
       }
   });
-
   // close window on escape
-  document.onkeydown = (evt) => {
-      //console.log("key down", evt)
+  document.addEventListener("keydown", (evt) => {
+      // console.log("key down", evt)
       // send event to iframe
       ctx.iframe.contentWindow.postMessage(evt.code, `${ctx.options.iframeURL}`);
 
-  };
+  });
 
 };
 

@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.47
+ * oono JavaScript Library v1.0.48
  *
  * Copyright wecansync
  *
@@ -287,7 +287,7 @@ const showRing = (ctx, badge, justUnseen) => {
     widgetDiv.querySelector(".oono-svg-stroke").classList.remove("active");
     setTimeout(() => {
       widgetDiv.querySelector(".oono-svg-stroke").classList.add("active");
-    }, 10);
+    }, 100);
     
     setTimeout(() => {
       // show badge

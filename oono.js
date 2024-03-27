@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.46
+ * oono JavaScript Library v1.0.47
  *
  * Copyright wecansync
  *
@@ -600,12 +600,13 @@ const destroy = (ctx) => {
 
       .oono-svg-stroke{
         position: absolute;
-        width: calc(100% + ${ctx.width/10}px);
-        height: calc(100% + ${ctx.width/10}px);
-        top: -${ctx.width/20}px;
-        left: -${ctx.width/20}px;
+        width: calc(100% + ${parseInt(ctx.width/10)}px);
+        height: calc(100% + ${parseInt(ctx.width/10)}px);
+        top: -${parseInt(ctx.width/20)}px;
+        left: -${parseInt(ctx.width/20)}px;
         box-sizing: border-box;
         display:none;
+        transform: scaleX(-1);
       }
       .oono-svg-stroke.active{
         display:block;
@@ -614,7 +615,7 @@ const destroy = (ctx) => {
         fill:none;
         stroke:red;
         stroke-linecap: round;
-        stroke-width:${ctx.width/15}px;
+        stroke-width:${parseInt(ctx.width/15)}px;
         stroke-dasharray: 1;
         stroke-dashoffset: 0;
         animation: stroke-draw 3s ease-in-out alternate; 
@@ -632,7 +633,7 @@ const destroy = (ctx) => {
       @keyframes stroke-draw {
         0%{
           stroke-dasharray: 20;
-          stroke-width:${ctx.width/20}px;
+          stroke-width:${parseInt(ctx.width/20)}px;
           transform: rotate(0deg);
         }
         25%{
@@ -644,7 +645,7 @@ const destroy = (ctx) => {
         }
         100%{ 
           stroke-dasharray: 1;
-          stroke-width:${ctx.width/15}px;
+          stroke-width:${parseInt(ctx.width/15)}px;
           
           
         }

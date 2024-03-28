@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.49
+ * oono JavaScript Library v1.0.50
  *
  * Copyright wecansync
  *
@@ -563,7 +563,8 @@ const destroy = (ctx) => {
     if(!ctx.iframe){
       return console.error("iframe not exists");
     }
-    setIframeUrl(ctx, id);
+    //setIframeUrl(ctx, id);
+    ctx.activeStory = id;
   }
 
   function extend (oonoStories) {
@@ -587,6 +588,7 @@ const destroy = (ctx) => {
       this.openStoryButton.click();
     };
     prototype.close = function () {
+      this.iframe.contentWindow.postMessage("Escape", `${this.options.iframeURL}`);
       closeWindow(this);
     };
   }
@@ -773,7 +775,7 @@ const destroy = (ctx) => {
 
   const showIframe = (ctx) => {
     ctx.iframeStoriesDiv.style.display = "inline-block";
-    ctx.iframe.contentWindow.postMessage('resume', `${ctx.options.iframeURL}`);
+    ctx.iframe.contentWindow.postMessage({type: 'resume', storyId: ctx.activeStory}, `${ctx.options.iframeURL}`);
     ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 0px, 0px)`;
   }
 
@@ -849,7 +851,7 @@ const destroy = (ctx) => {
     }
     ctx.options = data;
     // debug
-    //ctx.options.iframeURL = "http://192.168.1.106:3000/oono";
+    // ctx.options.iframeURL = "http://oono.myoono.local:3000/";
     
     init(ctx);
     return ctx;

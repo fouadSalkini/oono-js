@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.50
+ * oono JavaScript Library v1.0.51
  *
  * Copyright wecansync
  *
@@ -634,21 +634,15 @@ const destroy = (ctx) => {
       @keyframes stroke-draw {
         0%{
           stroke-dasharray: 20;
-          stroke-width:${parseInt(ctx.width/20)}px;
           transform: rotate(0deg);
         }
-        25%{
-        }
+       
         50%{
-        }
-        75%{
-          transform: rotate(-1000deg);
+          transform: rotate(-360deg);
         }
         100%{ 
-          stroke-dasharray: 1;
-          stroke-width:${parseInt(ctx.width/15)}px;
-          
-          
+          stroke-dasharray: 0;
+          transform: rotate(-720deg);          
         }
       }
 
@@ -669,31 +663,29 @@ const destroy = (ctx) => {
 
       @keyframes close-window {
         0%{
-          
+          display:none;
           border-radius:50%;
           opacity:0.2;
           transform: translate(0, 20%);
         }
         25%{ 
-         
           opacity:0.15;
           border-radius:50%;
           transform: translate(0, 30%);
         }
         50%{ 
-          
           opacity:0.10;
           border-radius:50%;
           transform: translate(0, 20%);
         }
         75%{ 
-          
           opacity:0.05;
           border-radius:50%;
           
 
         }
         100%{ 
+          display:none;
           width:0;
           height:0;
           opacity: 0;
@@ -718,8 +710,8 @@ const destroy = (ctx) => {
     var left = ctx.clickOffset.x ;//+ w/2;
 
     ctx.iframeStoriesDiv.classList.add("close-window");
-    ctx.iframe.style.width = `100vw`;
-    ctx.iframe.style.height = `100vh`;
+    ctx.iframe.style.width = `100%`;
+    ctx.iframe.style.height = `100%`;
 
     ctx.iframeStoriesDiv.style.width = `100vw`;
     ctx.iframeStoriesDiv.style.height = `100vw`;
@@ -732,6 +724,9 @@ const destroy = (ctx) => {
       ctx.iframeStoriesDiv.style.display = "none";
       ctx.iframeStoriesDiv.style.transform = ``;
       ctx.iframeStoriesDiv.style.transition = ``;
+   
+      ctx.iframeStoriesDiv.style.width = `100vw`;
+      ctx.iframeStoriesDiv.style.height = `100vh`;
     }, 300)
     checkUnseenStories(ctx);
     if(!!ctx.preview){

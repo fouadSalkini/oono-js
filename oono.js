@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.51
+ * oono JavaScript Library v1.0.52
  *
  * Copyright wecansync
  *
@@ -460,7 +460,7 @@ const fetchConfig = async (ctx) => {
 
   
   
-  var requestUrl = `https://${ctx.options.tenantId}.${ctx.host}/api/tenant/get-snippet/${ctx.uuid}?sessionId=${ctx.sessionId}`;
+  var requestUrl = `https://${ctx.options.tenantId}.${ctx.host}/api/tenant/get-snippet/${ctx.uuid}?sessionId=${ctx.sessionId}&first=${ctx.firstLoad}`;
   let res = null;
   // Send the GET request
   await fetch(requestUrl)
@@ -817,7 +817,7 @@ const destroy = (ctx) => {
 
   const doInit = async (ctx) => {
 
-    
+    ctx.firstLoad = false;
 
     // push the object to the objects list
     ctx.elements[0].oonoStories = ctx;
@@ -845,6 +845,10 @@ const destroy = (ctx) => {
       return false;
     }
     ctx.options = data;
+    if(!ctx.preview){
+      ctx.firstLoad = true;
+    }
+    
     // debug
     // ctx.options.iframeURL = "http://oono.myoono.local:3000/";
     

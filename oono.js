@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.52
+ * oono JavaScript Library v1.0.53
  *
  * Copyright wecansync
  *
@@ -817,7 +817,7 @@ const destroy = (ctx) => {
 
   const doInit = async (ctx) => {
 
-    ctx.firstLoad = false;
+    
 
     // push the object to the objects list
     ctx.elements[0].oonoStories = ctx;
@@ -839,15 +839,19 @@ const destroy = (ctx) => {
     ctx.timestamp = new Date().getTime();
     ctx.refreshTimer = ctx.options.refreshTimer ? ctx.options.refreshTimer : refreshTimer;
     extend.call(ctx, oonoStories);
+    ctx.firstLoad = 0;
+    if(!ctx.preview){
+      ctx.firstLoad = 1;
+    }
     const data = await fetchConfig(ctx);
     if(!data){
       console.error(`invalid config`);
       return false;
     }
     ctx.options = data;
-    if(!ctx.preview){
-      ctx.firstLoad = true;
-    }
+    
+    ctx.firstLoad = 0;
+    
     
     // debug
     // ctx.options.iframeURL = "http://oono.myoono.local:3000/";

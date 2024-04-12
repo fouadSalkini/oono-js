@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.54
+ * oono JavaScript Library v1.0.55
  *
  * Copyright wecansync
  *
@@ -241,7 +241,7 @@
         return;
     }
     if (!ctx.options?.activeStoriesCount) {
-        hideRing(ctx);
+        hideRing(ctx, false);
         return;
     }
     
@@ -300,8 +300,11 @@ const showRing = (ctx, badge, justUnseen) => {
  
 };
 
-const hideRing = (ctx) => {
+const hideRing = (ctx, showBorder) => {
 
+  if(typeof showBorder === 'undefined'){
+    var showBorder = true;
+  }
   clearInterval(ctx.ringInterval);
   ctx.ringInterval = null;
 
@@ -309,11 +312,16 @@ const hideRing = (ctx) => {
     var widgetDiv = el.querySelector(".oono-widget");
     var badgeDiv = el.querySelector(".oono-badge");
 
-    // hiding ring
-    widgetDiv.style.borderColor = "lightgrey";
-    widgetDiv.querySelector(".oono-svg-stroke").classList.remove("active");
-    widgetDiv.style.borderWidth = `${ctx.width/30}px`;
-    widgetDiv.style.borderStyle = "solid";
+    if(showBorder){
+      // hiding ring
+      widgetDiv.style.borderColor = "lightgrey";
+      widgetDiv.querySelector(".oono-svg-stroke").classList.remove("active");
+      widgetDiv.style.borderWidth = `${ctx.width/30}px`;
+      widgetDiv.style.borderStyle = "solid";
+    }else{
+      widgetDiv.style.borderStyle = "none";
+    }
+    
 
     //hide badge
     badgeDiv.style.display = "none";

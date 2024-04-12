@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.53
+ * oono JavaScript Library v1.0.54
  *
  * Copyright wecansync
  *
@@ -241,6 +241,7 @@
         return;
     }
     if (!ctx.options?.activeStoriesCount) {
+        hideRing(ctx);
         return;
     }
     
@@ -541,6 +542,8 @@ const destroy = (ctx) => {
       setTimeout(() => {
           if (ctx.options.activeStoriesCount) {
               checkUnseenStories(ctx);
+          }else{
+            showHideRing(ctx, null);
           }
       }, 200);
       if(allowRefresh){

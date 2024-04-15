@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.55
+ * oono JavaScript Library v1.0.56
  *
  * Copyright wecansync
  *
@@ -427,41 +427,52 @@ const appendHtml = (ctx) => {
   document.body.appendChild(ctx.iframeStoriesDiv);
 }
 
+const onMessageEvent =  (event) => {
+  // Check if the message is from the iframe
+  if (event.source === ctx.iframe.contentWindow) {
+      // Log the message sent from the iframe
+      if (event.data == 'Escape') {
+          closeWindow(ctx);
+      }
+      // return;
+      if(event.data.dragend){
+        if(event.data.dragend > 200){
+          closeWindow(ctx);
+          return;
+        }
+        ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 0px, 0px)`;
+        ctx.iframeStoriesDiv.style.borderRadius = `0px`;
+        ctx.iframeStoriesDiv.style.transition = ``;
+      }
+      const offset = parseInt(event.data.drag/1.4);
+      if(offset > 0){
+        const scale = 1 - offset*0.6/800;
+        ctx.iframeStoriesDiv.style.transform = `translate3d(0px, ${offset}px, 0px) scale(${scale})`;
+        ctx.iframeStoriesDiv.style.borderRadius = `10px`;
+      }
+  }
+}
+
+const onKeydownEvent = (evt) => {
+  // console.log("key down", evt)
+  // send event to iframe
+  ctx.iframe.contentWindow.postMessage(evt.code, `${ctx.options.iframeURL}`);
+
+}
+
 const addEventListeners = (ctx) => {
 
-  window.addEventListener('message', function (event) {
-      // Check if the message is from the iframe
-      if (event.source === ctx.iframe.contentWindow) {
-          // Log the message sent from the iframe
-          if (event.data == 'Escape') {
-              closeWindow(ctx);
-          }
-          // return;
-          if(event.data.dragend){
-            if(event.data.dragend > 200){
-              closeWindow(ctx);
-              return;
-            }
-            ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 0px, 0px)`;
-            ctx.iframeStoriesDiv.style.borderRadius = `0px`;
-            ctx.iframeStoriesDiv.style.transition = ``;
-          }
-          const offset = parseInt(event.data.drag/1.4);
-          if(offset > 0){
-            const scale = 1 - offset*0.6/800;
-            ctx.iframeStoriesDiv.style.transform = `translate3d(0px, ${offset}px, 0px) scale(${scale})`;
-            ctx.iframeStoriesDiv.style.borderRadius = `10px`;
-          }
-      }
-  });
+  window.addEventListener('message', onMessageEvent);
   // close window on escape
-  document.addEventListener("keydown", (evt) => {
-      // console.log("key down", evt)
-      // send event to iframe
-      ctx.iframe.contentWindow.postMessage(evt.code, `${ctx.options.iframeURL}`);
+  document.addEventListener("keydown", onKeydownEvent);
 
-  });
+};
 
+const removeEventListeners = (ctx) => {
+
+  window.removeEventListener('message', onMessageEvent);
+  // close window on escape
+  document.removeEventListener("keydown", onKeydownEvent);
 };
 
 const fetchConfig = async (ctx) => {
@@ -530,6 +541,8 @@ const destroy = (ctx) => {
     ctx.elements[i].dataset.initialized = false;
     ctx.elements[i].innerHTML = "";
   }
+  clearInterval(ctx.ringInterval);
+  removeEventListeners(ctx);
   
   return;
 }
@@ -808,7 +821,7 @@ const destroy = (ctx) => {
 
   const alreadyInitialized = (ctx) => {
     for(var i = 0; i< ctx.elements.length; i++ ){
-      if(!ctx.elements[i].dataset.initialized){
+      if(!ctx.elements[i].dataset.initialized || ctx.elements[i].dataset.initialized == 'false'){
         return false;
       }
     }
@@ -822,7 +835,7 @@ const destroy = (ctx) => {
   }
 
   const filterUninitializedElements = (ctx) => {
-    ctx.elements = Array.from(ctx.elements).filter(el => !el.dataset.initialized);
+    ctx.elements = Array.from(ctx.elements).filter(el => (!el.dataset.initialized || el.dataset.initialized == 'false'));
   };
   
 
@@ -907,13 +920,12 @@ const destroy = (ctx) => {
     this.name = `oonoStories-${this.id}`;
     this.debounce = 0;
     var _this = this;
-
     let initStatus = initSelector(this);
 
     if(!initStatus){
       return;
     }
-
+    
     if(alreadyInitialized(this)){
       console.warn(`the oono element has already been initialized`);
       return this.elements[0].oonoStories;

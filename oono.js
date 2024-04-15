@@ -464,7 +464,7 @@ const onKeydownEvent = (evt, ctx) => {
 }
 
 const addEventListeners = (ctx) => {
-
+  console.log("Adding events");
   const evt1 = (event) => {
     onMessageEvent(event, ctx);
   };
@@ -480,7 +480,7 @@ const addEventListeners = (ctx) => {
 };
 
 const removeEventListeners = (ctx) => {
-
+  console.log("Removing events");
   const evt1 = (event) => {
     onMessageEvent(event, ctx);
   };

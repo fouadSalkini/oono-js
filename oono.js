@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.57
+ * oono JavaScript Library v1.0.58
  *
  * Copyright wecansync
  *
@@ -430,7 +430,7 @@ const appendHtml = (ctx) => {
   document.body.appendChild(ctx.iframeStoriesDiv);
 }
 
-const onMessageEvent =  (event) => {
+const onMessageEvent =  (event, ctx) => {
   // Check if the message is from the iframe
   if (event.source === ctx.iframe.contentWindow) {
       // Log the message sent from the iframe
@@ -456,7 +456,7 @@ const onMessageEvent =  (event) => {
   }
 }
 
-const onKeydownEvent = (evt) => {
+const onKeydownEvent = (evt, ctx) => {
   // console.log("key down", evt)
   // send event to iframe
   ctx.iframe.contentWindow.postMessage(evt.code, `${ctx.options.iframeURL}`);
@@ -465,17 +465,33 @@ const onKeydownEvent = (evt) => {
 
 const addEventListeners = (ctx) => {
 
-  window.addEventListener('message', onMessageEvent);
+  const evt1 = (event) => {
+    onMessageEvent(event, ctx);
+  };
+
+  const evt2 = (event) => {
+    onKeydownEvent(event, ctx);
+  };
+
+  window.addEventListener('message', evt1);
   // close window on escape
-  document.addEventListener("keydown", onKeydownEvent);
+  document.addEventListener("keydown", evt2);
 
 };
 
 const removeEventListeners = (ctx) => {
 
-  window.removeEventListener('message', onMessageEvent);
+  const evt1 = (event) => {
+    onMessageEvent(event, ctx);
+  };
+
+  const evt2 = (event) => {
+    onKeydownEvent(event, ctx);
+  };
+
+  window.removeEventListener('message', evt1);
   // close window on escape
-  document.removeEventListener("keydown", onKeydownEvent);
+  document.removeEventListener("keydown", evt2);
 };
 
 const fetchConfig = async (ctx) => {

@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.56
+ * oono JavaScript Library v1.0.57
  *
  * Copyright wecansync
  *
@@ -237,7 +237,7 @@
   });
 
   const showHideRing = (ctx, data) => {
-    if (!ctx.container) {
+    if (!ctx.container || ctx.destroyed) {
         return;
     }
     if (!ctx.options?.activeStoriesCount) {
@@ -362,6 +362,9 @@ const checkUnseenStories = (ctx) => {
             // Handle the response data here
             //console.warn(data);
             if (data && data.status && data.data) {
+              if(ctx.destroyed){
+                return false;
+              }
               if(!ctx.sessionId){
                 ctx.sessionId = data.data.sessionId;
                 setIframeUrl(ctx);
@@ -506,6 +509,9 @@ const doRefresh = async (ctx)  => {
   if(!data){
     return false;
   }
+  if(ctx.destroyed){
+    return;
+  }
   if(data.logoURL != ctx.options.logoURL){
     ctx.options = data;
     return init(ctx, false);
@@ -527,6 +533,9 @@ const refresh = async (ctx)  => {
   if(!alreadyInitialized(ctx)){
     return false;
   }
+  if(ctx.destroyed){
+    return;
+  }
   await doRefresh(ctx);
   var refTimer = debounce(() =>{
     refresh(ctx)
@@ -541,6 +550,7 @@ const destroy = (ctx) => {
     ctx.elements[i].dataset.initialized = false;
     ctx.elements[i].innerHTML = "";
   }
+  ctx.destroyed  = true;
   clearInterval(ctx.ringInterval);
   removeEventListeners(ctx);
   
@@ -548,6 +558,7 @@ const destroy = (ctx) => {
 }
   
   const init =  (ctx, allowRefresh = true) => {
+    ctx.destroyed  = false;
     // return new Promise(function ($return, $error) {
       createMainWidget(ctx);
       createRing(ctx);
@@ -879,7 +890,9 @@ const destroy = (ctx) => {
     
     // debug
     // ctx.options.iframeURL = "http://oono.myoono.local:3000/";
-    
+    if(ctx.destroyed){
+      return ctx;
+    }
     init(ctx);
     return ctx;
   }

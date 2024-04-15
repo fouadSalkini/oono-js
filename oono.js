@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.58
+ * oono JavaScript Library v1.0.59
  *
  * Copyright wecansync
  *
@@ -754,8 +754,8 @@ const destroy = (ctx) => {
     body.classList.remove("oono-open");
 
     ctx.openWindow = false;
-    var w = ctx.elements[0].querySelector(".oono-widget").offsetWidth;
-    var h = ctx.elements[0].querySelector(".oono-widget").offsetHeight;
+    //var w = ctx.elements[0].querySelector(".oono-widget").offsetWidth;
+    //var h = ctx.elements[0].querySelector(".oono-widget").offsetHeight;
 
     var top = ctx.clickOffset.y ;//+ h/2;
     var left = ctx.clickOffset.x ;//+ w/2;

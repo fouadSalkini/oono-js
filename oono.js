@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.60
+ * oono JavaScript Library v1.0.61
  *
  * Copyright wecansync
  *
@@ -339,7 +339,7 @@ const checkUnseenStories = (ctx) => {
         showHideRing(ctx, null);
         return;
     }
-    var requestUrl = `https://${ctx.options.tenantId}.${ctx.host}/api/tenant/stories/have-unseen`;
+    var requestUrl = `https://${ctx.options.tenantId}.${ctx.host}/api/tenant/stories/have-unseen?brand=${ctx.options.brand}`;
     var postData = {};
     if (ctx.sessionId) {
         postData = {

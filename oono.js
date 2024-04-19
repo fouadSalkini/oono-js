@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.61
+ * oono JavaScript Library v1.0.62
  *
  * Copyright wecansync
  *
@@ -61,6 +61,7 @@
     
     return function () {
       clearTimeout(timer);
+      console.log("timeout 1");
       timer = setTimeout(function () {
         return callback();
       }, duration);
@@ -250,13 +251,13 @@
         ctx.options.activeStoriesCount
     ) {
       ctx.unseenCount = data?.unseenCount;
-      showRing(ctx, ctx.unseenCount, true);
-      if(!ctx.ringInterval){
+      //showRing(ctx, ctx.unseenCount, true);
+      // if(!ctx.ringInterval){
         showRing(ctx, ctx.unseenCount);
-        ctx.ringInterval = setInterval(() => {
-          showRing(ctx, ctx.unseenCount);
-        }, refreshTimer);
-      }
+      //   ctx.ringInterval = setInterval(() => {
+      //     showRing(ctx, ctx.unseenCount);
+      //   }, refreshTimer);
+      // }
       
       
 
@@ -286,10 +287,12 @@ const showRing = (ctx, badge, justUnseen) => {
     widgetDiv.style.borderStyle = "solid";
     
     widgetDiv.querySelector(".oono-svg-stroke").classList.remove("active");
+    console.log("timeout 2: showRing");
     setTimeout(() => {
       widgetDiv.querySelector(".oono-svg-stroke").classList.add("active");
     }, 100);
     
+    console.log("timeout 3: showRing");
     setTimeout(() => {
       // show badge
       badgeDiv.style.display = "flex";
@@ -405,6 +408,7 @@ const handleIframeLoaded = (ctx) => {
         if (ctx.iframeStoriesDiv) {
             ctx.iframeLoaded = true;
             if (ctx.openWindow) {
+              console.log("timeout 4");
                 setTimeout(() => {
                   // console.log("loaded", ctx.container);
                   select$1(".oono-widget").forEach((el) => {
@@ -587,6 +591,7 @@ const destroy = (ctx) => {
       handleIframeLoaded(ctx);
       appendHtml(ctx);
       addEventListeners(ctx);
+      console.log("timeout 5");
       setTimeout(() => {
           if (ctx.options.activeStoriesCount) {
               checkUnseenStories(ctx);
@@ -770,6 +775,7 @@ const destroy = (ctx) => {
       ctx.iframeStoriesDiv.style.transform = `translate3d(${left}px,${top}px, 0)`;
       // ctx.iframeStoriesDiv.style.transition = `transform ease 0.1s`;
     // }, 800)
+    console.log("timeout 6");
     setTimeout(() => {
       ctx.iframeStoriesDiv.classList.remove("close-window");
       ctx.iframeStoriesDiv.style.display = "none";
@@ -811,6 +817,7 @@ const destroy = (ctx) => {
       parentContainer.style.opacity = "0.5";
         ctx.openWindow = true;
         if (ctx.iframeLoaded && ctx.sessionId) {
+          console.log("timeout 7");
             setTimeout(() => {
               parentContainer.style.opacity = "1";
               showIframe(ctx);

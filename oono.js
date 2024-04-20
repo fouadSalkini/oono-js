@@ -61,7 +61,7 @@
     
     return function () {
       clearTimeout(timer);
-      console.log("timeout 1");
+      // console.log("timeout 1");
       timer = setTimeout(function () {
         return callback();
       }, duration);
@@ -124,7 +124,7 @@
     // Create a div for the story badge
     ctx.badgeDiv = create("div", {});
     ctx.badgeDiv.className = "oono-badge";
-    ctx.badgeDiv.style.cssText =`display:none; box-sizing: border-box; width: 33%; height: 33%; align-items: center; justify-content: center; position: absolute; background: red; top: -${ctx.width/13}px; right: -${ctx.width/13}px; padding: 0px; border-radius: 50%; color: white; font-size: ${ctx.width/5}px; line-height: ${ctx.width/5}px; font-weight: bold;font-family:system-ui`;
+    ctx.badgeDiv.style.cssText =`display:none; box-sizing: border-box; width: 33%; height: 33%; align-items: center; justify-content: center; position: absolute; background: red; top: -${ctx.width/13}px; right: -${ctx.width/13}px; padding: 0px; border-radius: 50%; color: white; font-size: ${ctx.width/5}px; line-height: ${ctx.width/5}px; font-weight: bold;font-family:system-ui;z-index: 1`;
     ctx.widgetDiv.appendChild(ctx.badgeDiv);
   };
 
@@ -287,12 +287,12 @@ const showRing = (ctx, badge, justUnseen) => {
     widgetDiv.style.borderStyle = "solid";
     
     widgetDiv.querySelector(".oono-svg-stroke").classList.remove("active");
-    console.log("timeout 2: showRing");
+    // console.log("timeout 2: showRing");
     setTimeout(() => {
       widgetDiv.querySelector(".oono-svg-stroke").classList.add("active");
     }, 100);
     
-    console.log("timeout 3: showRing");
+    // console.log("timeout 3: showRing");
     setTimeout(() => {
       // show badge
       badgeDiv.style.display = "flex";
@@ -408,7 +408,7 @@ const handleIframeLoaded = (ctx) => {
         if (ctx.iframeStoriesDiv) {
             ctx.iframeLoaded = true;
             if (ctx.openWindow) {
-              console.log("timeout 4");
+              // console.log("timeout 4");
                 setTimeout(() => {
                   // console.log("loaded", ctx.container);
                   select$1(".oono-widget").forEach((el) => {
@@ -556,7 +556,9 @@ const refresh = async (ctx)  => {
   if(ctx.destroyed){
     return;
   }
-  await doRefresh(ctx);
+  if(!ctx.openWindow){
+    await doRefresh(ctx);
+  }
   var refTimer = debounce(() =>{
     refresh(ctx)
   },ctx.refreshTimer)
@@ -591,7 +593,7 @@ const destroy = (ctx) => {
       handleIframeLoaded(ctx);
       appendHtml(ctx);
       addEventListeners(ctx);
-      console.log("timeout 5");
+      // console.log("timeout 5");
       setTimeout(() => {
           if (ctx.options.activeStoriesCount) {
               checkUnseenStories(ctx);
@@ -775,8 +777,8 @@ const destroy = (ctx) => {
       ctx.iframeStoriesDiv.style.transform = `translate3d(${left}px,${top}px, 0)`;
       // ctx.iframeStoriesDiv.style.transition = `transform ease 0.1s`;
     // }, 800)
-    console.log("timeout 6");
-    setTimeout(() => {
+    // console.log("timeout 6");
+    // setTimeout(() => {
       ctx.iframeStoriesDiv.classList.remove("close-window");
       ctx.iframeStoriesDiv.style.display = "none";
       ctx.iframeStoriesDiv.style.transform = ``;
@@ -784,7 +786,7 @@ const destroy = (ctx) => {
    
       ctx.iframeStoriesDiv.style.width = `100vw`;
       ctx.iframeStoriesDiv.style.height = `100vh`;
-    }, 300)
+    // }, 300)
     checkUnseenStories(ctx);
     if(!!ctx.preview){
       return;
@@ -817,7 +819,7 @@ const destroy = (ctx) => {
       parentContainer.style.opacity = "0.5";
         ctx.openWindow = true;
         if (ctx.iframeLoaded && ctx.sessionId) {
-          console.log("timeout 7");
+          // console.log("timeout 7");
             setTimeout(() => {
               parentContainer.style.opacity = "1";
               showIframe(ctx);

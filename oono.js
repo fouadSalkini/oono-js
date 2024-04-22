@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.63
+ * oono JavaScript Library v1.0.64
  *
  * Copyright wecansync
  *
@@ -342,7 +342,7 @@ const checkUnseenStories = (ctx) => {
         showHideRing(ctx, null);
         return;
     }
-    var requestUrl = `https://${ctx.options.tenantId}.${ctx.host}/api/tenant/stories/have-unseen?brand=${ctx.options.brand}`;
+    var requestUrl = `${ctx.options.scheme}${ctx.options.tenantId}.${ctx.host}/api/tenant/stories/have-unseen?brand=${ctx.options.brand}`;
     var postData = {};
     if (ctx.sessionId) {
         postData = {
@@ -392,7 +392,7 @@ const setIframeUrl = (ctx, story) => {
     var story = 0;
   }
   const prev = ctx.preview ? 1 : 0;
-  ctx.iframe.src = `${ctx.options.iframeURL}?session=${ctx.sessionId}&url=${ctx.url}&preview=${prev}&closeBtn=1&resume=0&storyId=${story}`;
+  ctx.iframe.src = `${ctx.options.iframeURL}?brand=${ctx.options.brand}&session=${ctx.sessionId}&url=${ctx.url}&preview=${prev}&closeBtn=1&resume=0&storyId=${story}`;
 };
 
 const handleIframeLoaded = (ctx) => {
@@ -503,7 +503,7 @@ const fetchConfig = async (ctx) => {
 
   
   
-  var requestUrl = `https://${ctx.options.tenantId}.${ctx.host}/api/tenant/get-snippet/${ctx.uuid}?sessionId=${ctx.sessionId}&first=${ctx.firstLoad}`;
+  var requestUrl = `${ctx.options.scheme}${ctx.options.tenantId}.${ctx.host}/api/tenant/get-snippet/${ctx.uuid}?sessionId=${ctx.sessionId}&first=${ctx.firstLoad}`;
   let res = null;
   // Send the GET request
   await fetch(requestUrl)

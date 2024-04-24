@@ -659,10 +659,10 @@ const destroy = (ctx) => {
 
       .oono-svg-stroke{
         position: absolute;
-        width: calc(100% + ${parseInt(ctx.width/10)}px);
-        height: calc(100% + ${parseInt(ctx.width/10)}px);
-        top: -${parseInt(ctx.width/20)}px;
-        left: -${parseInt(ctx.width/20)}px;
+        width: calc(100% + ${parseInt(ctx.width/8)}px);
+        height: calc(100% + ${parseInt(ctx.width/8)}px);
+        top: -${parseInt(ctx.width/16)}px;
+        left: -${parseInt(ctx.width/16)}px;
         box-sizing: border-box;
         display:none;
         transform: scaleX(-1);

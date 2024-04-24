@@ -33,31 +33,27 @@
     <div style="display:inline-block" id="oono-test2"></div>
     <script>
         var stories = new oonoStories({
-            selector: "#oono-test",
-            tenantId: "848418334",
-            widgetId: "a37ca7a9-47b0-438f-a407-ccf1d1c1fd39",
-            //width: 40,
-            //height: 40,
-            host: "oono.local",
-            //refreshTimer: 3000,
-            autoRefresh: false,
-            // preview: true, // to disable the views counter,
-            scheme: 'http://',
+            
+            "containerId": "oono-test",
+            "host": "oono.local",
+            "widgetId": "13edbca2-fcd1-48a3-8952-68ae003e975a",
+            "tenantId": "oono",
+            "scheme": "http://",
+            "refreshTimer": 3000
         })
 
-        // var stories2 = new oonoStories({
-        //     selector: "#oono-test2",
-        //     tenantId: "222888333",
-        //     widgetId: "9864d583-10c0-4c74-a073-ae6f890cccd5",
-        //     //width: 40,
-        //     //height: 40,
-        //     host: "staging.oono.ai",
-        //     //refreshTimer: 3000,
-        //     autoRefresh: false,
-        //     // preview: true, // to disable the views counter
-        // })
+        var stories2 = new oonoStories({
+            "containerId": "oono-test2",
+            "host": "oono.local",
+            "widgetId": "a37ca7a9-47b0-438f-a407-ccf1d1c1fd39",
+            "tenantId": "848418334",
+            "scheme": "http://",
+            "refreshTimer": 3000
+        })
        
     </script>
+
+
 
 
 

@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.1.0
+ * oono JavaScript Library v1.1.1
  *
  * Copyright wecansync
  *
@@ -582,16 +582,15 @@
   const createCssClasses = (ctx) => {
     var style = create('style', {});
     style.type = 'text/css';
+    const width = `${ctx.width}px`;
+    const height = `${ctx.height}px`;
+    const fontSize = `${ctx.width / 5}px`;
+    const maxWidth = `${logoMaxWidth}px`;
     style.innerHTML = `
 
-      :root {
-        --oono-width: ${ctx.width}px;
-        --oono-height: ${ctx.height}px;
-        --oono-font-size: ${ctx.width / 5}px;
-        --oono-logo-wax-width: ${logoMaxWidth};
-      }
+     
 
-      .oono-widget {
+      ${ctx.selector} .oono-widget {
           position: relative;
           cursor: pointer;
           width: 100%;
@@ -599,30 +598,30 @@
           box-sizing: border-box;
       }
       
-      .oono-widget.show-circle {
+      ${ctx.selector} .oono-widget.show-circle {
           border: 2px solid transparent;
           border-radius: 50%;
           overflow: hidden;
-          height: var(--oono-height);
-          width: var(--oono-width);
+          height: ${height};
+          width: ${width};
       }
       
-      .oono-widget.hide-circle {
+      ${ctx.selector} .oono-widget.hide-circle {
           height: auto;
           width: auto;
       }
       
-      .oono-widget.no-stories {
+      ${ctx.selector} .oono-widget.no-stories {
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          height: var(--oono-height);
-          width: var(--oono-width);
+          height: ${height};
+          width: ${width};
       }
       
       
-      .oono-badge {
+      ${ctx.selector} .oono-badge {
           display: flex;
           box-sizing: border-box;
           width: 33%;
@@ -636,21 +635,21 @@
           padding: 0px;
           border-radius: 50%;
           color: white;
-          font-size: var(--oono-font-size);
-          line-height: var(--oono-font-size);
+          font-size: ${fontSize};
+          line-height: ${fontSize};
           font-weight: bold;
           font-family: system-ui;
           z-index: 1;
       }
       
       
-      .oono-iframe-btn {
+      ${ctx.selector} .oono-iframe-btn {
           width: 100%;
           height: auto;
           box-sizing: border-box;
       }
       
-      .oono-iframe-btn.active-stories {
+      ${ctx.selector} .oono-iframe-btn.active-stories {
           box-sizing: border-box;
           width: 100%;
           height: 100%;
@@ -658,18 +657,18 @@
           padding: 9%;
       }
       
-      .oono-iframe-btn.active-stories.stories-seen {
+      ${ctx.selector} .oono-iframe-btn.active-stories.stories-seen {
           border: solid 2px lightgray;
           padding: calc(9% - 2px);
       }
       
-      .oono-open-story-button {
+      ${ctx.selector} .oono-open-story-button {
           box-sizing: border-box;
           width: 100%;
           height: auto;
       }
       
-      .oono-open-story-button.active-stories {
+      ${ctx.selector} .oono-open-story-button.active-stories {
           box-sizing: border-box;
           width: 100%;
           height: 100%;
@@ -681,19 +680,19 @@
           border: solid 1px lightgrey;
       }
       
-      .logo-img {
+      ${ctx.selector} .logo-img {
           width: 100%;
           height: auto;
           object-fit: cover;
-          max-width: var(--oono-logo-wax-width);
+          max-width: ${maxWidth};
           scale: 1.05;
       }
       
-      .logo-img.show-circle {
+      ${ctx.selector} .logo-img.show-circle {
           height: 100%;
       }
       
-      .oono-iframe-stories {
+      ${ctx.selector} .oono-iframe-stories {
           overflow: hidden;
           box-sizing: border-box;
           position: fixed;
@@ -712,7 +711,7 @@
           bottom: env(safe-area-inset-bottom);
       }
       
-      .oono-iframe {
+      ${ctx.selector} .oono-iframe {
           box-sizing: border-box;
           top: 0px;
           left: 0px;
@@ -724,7 +723,7 @@
           margin: 0px;
       }
       
-      .oono-hide {
+      ${ctx.selector} .oono-hide {
           display: none !important;
       }
       
@@ -732,11 +731,11 @@
       
       
       
-      .oono-open {
+      ${ctx.selector} .oono-open {
           overflow: hidden !important;
       }
       
-      .oono-svg-stroke {
+      ${ctx.selector} .oono-svg-stroke {
           position: absolute;
           width: calc(100%);
           height: calc(100%);
@@ -747,11 +746,11 @@
           transform: scaleX(-1);
       }
       
-      .show-ring .oono-svg-stroke {
+      ${ctx.selector} .show-ring .oono-svg-stroke {
           display: block;
       }
       
-      .oono-svg-stroke svg {
+      ${ctx.selector} .oono-svg-stroke svg {
           fill: none;
           stroke: red;
           stroke-linecap: round;
@@ -761,7 +760,7 @@
           /* animation: stroke-draw 3s ease-in-out alternate; */
       }
       
-      .oono-badge {
+      ${ctx.selector} .oono-badge {
           animation: bubble .3s ease-in-out alternate;
           /* animation-delay: 2.5s; */
           animation-fill-mode: both;
@@ -769,7 +768,7 @@
       
       
       
-      .close-window {
+      ${ctx.selector} .close-window {
           animation: close-window .3s ease-in-out alternate;
       }
       

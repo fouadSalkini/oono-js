@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.1.1
+ * oono JavaScript Library v1.1.2
  *
  * Copyright wecansync
  *
@@ -692,7 +692,7 @@
           height: 100%;
       }
       
-      ${ctx.selector} .oono-iframe-stories {
+      .oono-iframe-stories {
           overflow: hidden;
           box-sizing: border-box;
           position: fixed;
@@ -711,7 +711,7 @@
           bottom: env(safe-area-inset-bottom);
       }
       
-      ${ctx.selector} .oono-iframe {
+      .oono-iframe {
           box-sizing: border-box;
           top: 0px;
           left: 0px;
@@ -723,7 +723,7 @@
           margin: 0px;
       }
       
-      ${ctx.selector} .oono-hide {
+      .oono-hide {
           display: none !important;
       }
       

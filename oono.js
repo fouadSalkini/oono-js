@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.1.2
+ * oono JavaScript Library v1.1.3
  *
  * Copyright wecansync
  *
@@ -15,7 +15,7 @@
   const
     widgetWidth = "66",
     widgetHeight = "66",
-    logoMaxWidth = "200px",
+    logoMaxWidth = "200",
     refreshTimer = 10000,
     autoRefresh = true,
     preview = false,
@@ -75,14 +75,8 @@
     ctx.widgetDiv.className = "oono-widget";
 
 
-    if (!ctx.options.activeStoriesCount) {
-      if (ctx.options.showCircle) {
-        ctx.widgetDiv.classList.add("show-circle");
-      } else {
-        ctx.widgetDiv.classList.add("hide-circle");
-      }
-    } else {
-      ctx.widgetDiv.classList.add("no-stories");
+    if (ctx.options.activeStoriesCount) {
+      ctx.widgetDiv.classList.add("with-stories");
     }
 
   };
@@ -102,16 +96,14 @@
   const createBadgeDiv = (ctx) => {
     // Create a div for the story badge
     ctx.badgeDiv = create("div", {});
-    ctx.badgeDiv.className = "oono-badge oono-hide";
+    ctx.badgeDiv.className = "oono-badge";
     ctx.widgetDiv.appendChild(ctx.badgeDiv);
   };
 
   const createIframeBtnDiv = (ctx) => {
     ctx.iframeBtnDiv = create("div", {});
     ctx.iframeBtnDiv.className = "oono-iframe-btn";
-    if (ctx.options.activeStoriesCount) {
-      ctx.iframeBtnDiv.classList.add("active-stories");
-    }
+    
   };
 
   const createOpenStoryBtn = (ctx) => {
@@ -119,9 +111,7 @@
     ctx.openStoryButton = create("div", {});
     ctx.openStoryButton.className = "oono-open-story-button";
     // Set styles for the button based on the presence of 'showCircle' in ctx.options
-    if (ctx.options.activeStoriesCount) {
-      ctx.openStoryButton.classList.add("active-stories");
-    }
+    
     // Add click event to show the iframe stories
     ctx.openStoryButton.onclick = function (e) {
       ctx.clickOffset.x = e.clientX;
@@ -202,18 +192,14 @@
       ctx.options.activeStoriesCount
     ) {
       ctx.unseenCount = data?.unseenCount;
-      //showRing(ctx, ctx.unseenCount, true);
-      // if(!ctx.ringInterval){
       showRing(ctx, ctx.unseenCount);
-      //   ctx.ringInterval = setInterval(() => {
-      //     showRing(ctx, ctx.unseenCount);
-      //   }, refreshTimer);
-      // }
-
-
 
     } else {
-      hideRing(ctx);
+      if(ctx.options?.activeStoriesCount && (!ctx.unseenCount || !data?.showRing)){
+        hideRing(ctx, true);
+      }else{
+        hideRing(ctx);
+      }
       
     }
 
@@ -231,14 +217,11 @@
         return false;
       }
       
-      badgeDiv.classList.remove("oono-hide");
 
       widgetDiv.classList.add("show-ring");
-
-      widgetDiv.querySelector(".oono-svg-stroke").classList.remove("active");
-      widgetDiv.querySelector(".oono-svg-stroke").classList.add("active");
-
-
+      widgetDiv.classList.add("with-stories");
+      widgetDiv.classList.remove("stories-seen");
+     
 
     });
 
@@ -254,17 +237,16 @@
 
     ctx.elements.forEach((el) => {
       var widgetDiv = el.querySelector(".oono-widget");
-      var badgeDiv = el.querySelector(".oono-badge");
-      var iframeBtnDiv = el.querySelector(".oono-iframe-btn");
+      
+      widgetDiv.classList.remove("show-ring");
 
       if (showBorder) {
         // hiding ring
-        widgetDiv.classList.remove("show-ring");
-        iframeBtnDiv.classList.add("stories-seen");
+        widgetDiv.classList.add("stories-seen");
+      }else{
+        widgetDiv.classList.remove("with-stories");
       }
 
-      //hide badge
-      badgeDiv.classList.add("oono-hide");
     });
 
   };
@@ -596,22 +578,12 @@
           width: 100%;
           height: 100%;
           box-sizing: border-box;
-      }
-      
-      ${ctx.selector} .oono-widget.show-circle {
-          border: 2px solid transparent;
-          border-radius: 50%;
-          overflow: hidden;
-          height: ${height};
-          width: ${width};
-      }
-      
-      ${ctx.selector} .oono-widget.hide-circle {
           height: auto;
           width: auto;
       }
+
       
-      ${ctx.selector} .oono-widget.no-stories {
+      ${ctx.selector} .oono-widget.with-stories {
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -622,7 +594,7 @@
       
       
       ${ctx.selector} .oono-badge {
-          display: flex;
+          display: none;
           box-sizing: border-box;
           width: 33%;
           height: 33%;
@@ -641,6 +613,10 @@
           font-family: system-ui;
           z-index: 1;
       }
+
+      ${ctx.selector} .show-ring .oono-badge {
+        display: flex;
+      }
       
       
       ${ctx.selector} .oono-iframe-btn {
@@ -649,7 +625,7 @@
           box-sizing: border-box;
       }
       
-      ${ctx.selector} .oono-iframe-btn.active-stories {
+      ${ctx.selector} .with-stories .oono-iframe-btn {
           box-sizing: border-box;
           width: 100%;
           height: 100%;
@@ -657,7 +633,7 @@
           padding: 9%;
       }
       
-      ${ctx.selector} .oono-iframe-btn.active-stories.stories-seen {
+      ${ctx.selector} .with-stories.stories-seen .oono-iframe-btn {
           border: solid 2px lightgray;
           padding: calc(9% - 2px);
       }
@@ -668,7 +644,7 @@
           height: auto;
       }
       
-      ${ctx.selector} .oono-open-story-button.active-stories {
+      ${ctx.selector} .with-stories .oono-open-story-button {
           box-sizing: border-box;
           width: 100%;
           height: 100%;

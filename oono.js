@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.0.64
+ * oono JavaScript Library v1.1.0
  *
  * Copyright wecansync
  *
@@ -7,34 +7,35 @@
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.oonoStories = factory());
-})(this, (function () { 'use strict';
+    typeof define === 'function' && define.amd ? define(factory) :
+      (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.oonoStories = factory());
+})(this, (function () {
+  'use strict';
 
-  const 
-  widgetWidth = "66",
-  widgetHeight = "66",
-  logoMaxWidth = "200px",
-  refreshTimer = 10000,
-  autoRefresh = true,
-  preview = false,
-  defaultTenant = "oono",
-  defaultContainerId = "oono-container",
-  defaultHost = "oono.ai",
-  ringInterval = null,
+  const
+    widgetWidth = "66",
+    widgetHeight = "66",
+    logoMaxWidth = "200px",
+    refreshTimer = 10000,
+    autoRefresh = true,
+    preview = false,
+    defaultTenant = "oono",
+    defaultContainerId = "oono-container",
+    defaultHost = "oono.ai",
+    ringInterval = null,
 
-  defaultConfig = { 
-    containerId: defaultContainerId, 
-    tenantId: defaultTenant,
-    autoRefresh: true,
-    preview: false,
-    host: defaultHost,
-    width: widgetWidth,
-    height: widgetHeight,
-    clickOffset: {}
- }
- 
- ;
+    defaultConfig = {
+      containerId: defaultContainerId,
+      tenantId: defaultTenant,
+      autoRefresh: true,
+      preview: false,
+      host: defaultHost,
+      width: widgetWidth,
+      height: widgetHeight,
+      clickOffset: {}
+    }
+
+    ;
 
 
   const select$1 = (element) => {
@@ -55,10 +56,11 @@
     }
     return el;
   };
- 
+
   const debounce = (callback, duration) => {
-    var timer;
     
+    var timer;
+
     return function () {
       clearTimeout(timer);
       // console.log("timeout 1");
@@ -71,39 +73,16 @@
   const createMainWidget = (ctx) => {
     ctx.widgetDiv = create("div", {});
     ctx.widgetDiv.className = "oono-widget";
-    ctx.widgetDiv.style.cssText = ctx.options.widgetContainerStyle; // Set the styles provided
-    ctx.widgetDiv.style.position = "relative";
-    ctx.widgetDiv.style.cursor = "pointer";
-    ctx.widgetDiv.style.width = "100%";
-    ctx.widgetDiv.style.height = "100%";
-    ctx.widgetDiv.style.boxSizing = "border-box";
-
-    ctx.widgetDiv.style.borderColor = "transparent";
-    ctx.widgetDiv.style.borderWidth = "2px";
-    ctx.widgetDiv.style.borderStyle = "solid";
-
-    ctx.widgetDiv.style.padding = "2px";
 
 
     if (!ctx.options.activeStoriesCount) {
-        if (ctx.options.showCircle) {
-            ctx.widgetDiv.style.border = "2px solid transparent";
-            ctx.widgetDiv.style.borderRadius = "50%";
-            ctx.widgetDiv.style.overflow = "hidden";
-            ctx.widgetDiv.style.height = `${ctx.width}px`;
-            ctx.widgetDiv.style.width = `${ctx.height}px`;
-        } else {
-            ctx.widgetDiv.style.height = "auto";
-            ctx.widgetDiv.style.width = "auto";
-        }
+      if (ctx.options.showCircle) {
+        ctx.widgetDiv.classList.add("show-circle");
+      } else {
+        ctx.widgetDiv.classList.add("hide-circle");
+      }
     } else {
-        //widgetDiv.style.border = "3px solid red";
-        ctx.widgetDiv.style.borderRadius = "50%";
-        ctx.widgetDiv.style.display = "flex";
-        ctx.widgetDiv.style.alignItems = "center";
-        ctx.widgetDiv.style.justifyContent = "center";
-        ctx.widgetDiv.style.height = `${ctx.width}px`;
-        ctx.widgetDiv.style.width = `${ctx.height}px`;
+      ctx.widgetDiv.classList.add("no-stories");
     }
 
   };
@@ -123,18 +102,15 @@
   const createBadgeDiv = (ctx) => {
     // Create a div for the story badge
     ctx.badgeDiv = create("div", {});
-    ctx.badgeDiv.className = "oono-badge";
-    ctx.badgeDiv.style.cssText =`display:none; box-sizing: border-box; width: 33%; height: 33%; align-items: center; justify-content: center; position: absolute; background: red; top: -${ctx.width/13}px; right: -${ctx.width/13}px; padding: 0px; border-radius: 50%; color: white; font-size: ${ctx.width/5}px; line-height: ${ctx.width/5}px; font-weight: bold;font-family:system-ui;z-index: 1`;
+    ctx.badgeDiv.className = "oono-badge oono-hide";
     ctx.widgetDiv.appendChild(ctx.badgeDiv);
   };
 
   const createIframeBtnDiv = (ctx) => {
     ctx.iframeBtnDiv = create("div", {});
     ctx.iframeBtnDiv.className = "oono-iframe-btn";
-    //ctx.iframeBtnDiv.style.cssText = ctx.options.openButtonStyle; // Set the styles provided
-    ctx.iframeBtnDiv.style.cssText = "width:100%;height:auto;box-sizing:border-box";
     if (ctx.options.activeStoriesCount) {
-        ctx.iframeBtnDiv.style.cssText = "box-sizing:border-box;width:100%; height: 100%; border: solid 1px lightgrey; border-radius: 50%";
+      ctx.iframeBtnDiv.classList.add("active-stories");
     }
   };
 
@@ -144,10 +120,7 @@
     ctx.openStoryButton.className = "oono-open-story-button";
     // Set styles for the button based on the presence of 'showCircle' in ctx.options
     if (ctx.options.activeStoriesCount) {
-        ctx.openStoryButton.style.cssText =
-            "box-sizing:border-box;width:100%;height:100%;border-radius:50%; display:flex;align-items:center;justify-content:center;overflow:hidden";
-    } else {
-        ctx.openStoryButton.style.cssText = "box-sizing:border-box;width:100%;height:auto;";
+      ctx.openStoryButton.classList.add("active-stories");
     }
     // Add click event to show the iframe stories
     ctx.openStoryButton.onclick = function (e) {
@@ -157,31 +130,15 @@
     };
     // Check if ctx.logoURL is provided in ctx.options
     if (ctx.options.logoURL) {
-        // If yes, create an image element and set its attributes
-        ctx.logo = create("img", {});
-        ctx.logo.src = ctx.options.logoURL;
-        ctx.logo.style.width = "100%";
-        ctx.logo.style.height = "auto";
-        ctx.logo.style.objectFit = "cover";
-        if(ctx.options.showCircle){
-          ctx.logo.style.height = "100%";
-        }
-        ctx.logo.style.maxWidth = logoMaxWidth;
-        ctx.logo.style.scale = "1.05";
-        ctx.openStoryButton.appendChild(ctx.logo); // Append the image to the story button
-    } else if (ctx.options.buttonText) {
-        // If ctx.logoURL is not provided but buttonText is, set the text content of the button
-        ctx.openStoryButton.textContent = ctx.options.buttonText;
-    } else {
-        // If neither ctx.logoURL nor buttonText is provided, create an SVG element as the button content
-        ctx.openStoryButton.innerHTML =
-            `<svg xmlns="http://www.w3.org/2000/svg" style="width:${ctx.width}px;height:${ctx.height}px" fill="
-            ${ctx.options?.svgIconColor}
-            " viewbox="0 0 24 24" id="instagram-story"><path fill="
-            ${ctx.options?.svgIconColor} 
-            " fill-rule="evenodd" clip-rule="evenodd" d="M10.2263 2.128C10.3296 2.52914 10.0881 2.93802 9.68694 3.04127 9.19056 3.16903 8.7103 3.33698 8.24979 3.54149 7.87123 3.7096 7.42806 3.539 7.25994 3.16044 7.09183 2.78187 7.26243 2.3387 7.64099 2.17059 8.17667 1.9327 8.73547 1.73727 9.31306 1.58861 9.7142 1.48537 10.1231 1.72686 10.2263 2.128zM5.75633 4.15238C6.03781 4.45625 6.01966 4.93078 5.71579 5.21226 4.97148 5.90172 4.34093 6.71184 3.85525 7.61113 3.65841 7.97559 3.2034 8.11148 2.83894 7.91464 2.47448 7.71781 2.33859 7.26279 2.53543 6.89834 3.1 5.85298 3.83243 4.91218 4.69645 4.11183 5.00032 3.83035 5.47485 3.8485 5.75633 4.15238zM2.25612 9.61903C2.66481 9.6865 2.94142 10.0725 2.87396 10.4812 2.79247 10.9748 2.75 11.4821 2.75 11.9999 2.75 12.5177 2.79247 13.025 2.87396 13.5186 2.94142 13.9273 2.66481 14.3133 2.25612 14.3808 1.84744 14.4482 1.46145 14.1716 1.39399 13.7629 1.29922 13.1888 1.25 12.5998 1.25 11.9999 1.25 11.4 1.29922 10.811 1.39399 10.2369 1.46145 9.82819 1.84744 9.55157 2.25612 9.61903zM2.83894 16.0851C3.2034 15.8883 3.65841 16.0242 3.85525 16.3887 4.34093 17.288 4.97147 18.0981 5.71578 18.7875 6.01966 19.069 6.03781 19.5435 5.75633 19.8474 5.47485 20.1513 5.00032 20.1694 4.69644 19.888 3.83243 19.0876 3.1 18.1468 2.53543 17.1015 2.33859 16.737 2.47448 16.282 2.83894 16.0851zM7.25994 20.8394C7.42805 20.4608 7.87122 20.2902 8.24979 20.4583 8.7103 20.6628 9.19056 20.8308 9.68694 20.9585 10.0881 21.0618 10.3296 21.4707 10.2263 21.8718 10.1231 22.2729 9.7142 22.5144 9.31306 22.4112 8.73547 22.2625 8.17667 22.0671 7.64099 21.8292 7.26243 21.6611 7.09183 21.2179 7.25994 20.8394zM11.25 2C11.25 1.58579 11.5858 1.25 12 1.25 17.9371 1.25 22.75 6.06294 22.75 12 22.75 12.4142 22.4142 12.75 22 12.75 21.5858 12.75 21.25 12.4142 21.25 12 21.25 6.89137 17.1086 2.75 12 2.75 11.5858 2.75 11.25 2.41421 11.25 2zM21.4682 15.3127C21.8478 15.4786 22.021 15.9207 21.8552 16.3003 20.197 20.0954 16.4094 22.75 12 22.75 11.5858 22.75 11.25 22.4142 11.25 22 11.25 21.5858 11.5858 21.25 12 21.25 15.7919 21.25 19.0526 18.9682 20.4806 15.6997 20.6465 15.3202 21.0886 15.1469 21.4682 15.3127z"></path></svg>`;
+      // If yes, create an image element and set its attributes
+      ctx.logo = create("img", {});
+      ctx.logo.className = "logo-img";
+      ctx.logo.src = ctx.options.logoURL;
+      if (ctx.options.showCircle) {
+        ctx.logo.classList.add("show-circle");
+      }
+      ctx.openStoryButton.appendChild(ctx.logo); // Append the image to the story button
     }
-
     // Append the story button to the ctx.iframeBtnDiv
     ctx.iframeBtnDiv.appendChild(ctx.openStoryButton);
     ctx.widgetDiv.appendChild(ctx.iframeBtnDiv);
@@ -191,43 +148,37 @@
     // Create a div for the iframe stories
     const iframeClass = `.oono-iframe-stories-${ctx.uuid}`;
     const alreadyAdded = select$1(iframeClass);
-    if(alreadyAdded.length){
+    if (alreadyAdded.length) {
       ctx.iframeStoriesDiv = alreadyAdded[0];
       ctx.iframeLoaded = true;
       return;
     }
     ctx.iframeStoriesDiv = create("div", {});
-    ctx.iframeStoriesDiv.style.cssText = `overflow:hidden;box-sizing:border-box;position: fixed; top: 0px; left: 0px; width: 100vw; height: 100%; z-index: 999999999; border: none; outline: 0px; padding: 0px; margin: 0px; margin-left:auto; margin-right:auto; bottom: constant(safe-area-inset-bottom); bottom: env(safe-area-inset-bottom);`;
-    ctx.iframeStoriesDiv.style.display = "none";
-    ctx.iframeStoriesDiv.className = `oono-iframe-stories oono-iframe-stories-${ctx.uuid}`;
+    ctx.iframeStoriesDiv.className = `oono-hide oono-iframe-stories oono-iframe-stories-${ctx.uuid}`;
 
-    
   };
 
   const createIframe = (ctx) => {
 
     const iframeClass = `.oono-iframe-${ctx.uuid}`;
     const alreadyAdded = select$1(iframeClass);
-    if(alreadyAdded.length){
+    if (alreadyAdded.length) {
       ctx.iframe = alreadyAdded[0];
       return;
     }
     // Create an iframe for the stories and set its attributes
     ctx.iframe = create("iframe", {});
     // open iframe
-    if(ctx.sessionId){
+    if (ctx.sessionId) {
       setIframeUrl(ctx);
     }
 
     ctx.iframe.allow = "autoplay";
-    ctx.iframe.className = `oono-iframe-${ctx.uuid}`;
-    ctx.iframe.style.cssText = "box-sizing:border-box; top: 0px; left: 0px; width: 100%; height: 100%; border: none; outline: 0px; padding: 0px; margin: 0px;";
+    ctx.iframe.className = `oono-iframe oono-iframe-${ctx.uuid}`;
     ctx.iframeStoriesDiv.appendChild(ctx.iframe);
-    // ctx.widgetDiv.appendChild(ctx.iframeStoriesDiv);
-    // document.body.appendChild(ctx.iframeStoriesDiv);
   };
 
-  
+
 
   const eventEmitter = (function (name, ctx) {
     ctx.input.dispatchEvent(new CustomEvent(name, {
@@ -239,211 +190,193 @@
 
   const showHideRing = (ctx, data) => {
     if (!ctx.container || ctx.destroyed) {
-        return;
+      return;
     }
     if (!ctx.options?.activeStoriesCount) {
-        hideRing(ctx, false);
-        return;
+      hideRing(ctx, false);
+      return;
     }
-    
+
     if (
-        (typeof data === "undefined" || data.unseenCount) &&
-        ctx.options.activeStoriesCount
+      (typeof data === "undefined" || data.unseenCount) &&
+      ctx.options.activeStoriesCount
     ) {
       ctx.unseenCount = data?.unseenCount;
       //showRing(ctx, ctx.unseenCount, true);
       // if(!ctx.ringInterval){
-        showRing(ctx, ctx.unseenCount);
+      showRing(ctx, ctx.unseenCount);
       //   ctx.ringInterval = setInterval(() => {
       //     showRing(ctx, ctx.unseenCount);
       //   }, refreshTimer);
       // }
-      
-      
+
+
 
     } else {
-        hideRing(ctx);
-    }
-    
-};
-
-const showRing = (ctx, badge, justUnseen) => {
-
-  ctx.elements.forEach((el) => {
-    var widgetDiv = el.querySelector(".oono-widget");
-    var badgeDiv = el.querySelector(".oono-badge");
-
-    badgeDiv.innerHTML = badge;
-    if(justUnseen){
-      return false;
-    }
-    badgeDiv.style.display = "none";
-    
-
-    // showing ring
-    // widgetDiv.style.borderColor = "red";
-    widgetDiv.style.borderColor = "transparent";
-    widgetDiv.style.borderWidth = `${ctx.width/20}px`;
-    widgetDiv.style.borderStyle = "solid";
-    
-    widgetDiv.querySelector(".oono-svg-stroke").classList.remove("active");
-    // console.log("timeout 2: showRing");
-    setTimeout(() => {
-      widgetDiv.querySelector(".oono-svg-stroke").classList.add("active");
-    }, 100);
-    
-    // console.log("timeout 3: showRing");
-    setTimeout(() => {
-      // show badge
-      badgeDiv.style.display = "flex";
+      hideRing(ctx);
       
-    }, [2000]);
-    
-  });
- 
-};
-
-const hideRing = (ctx, showBorder) => {
-
-  if(typeof showBorder === 'undefined'){
-    var showBorder = true;
-  }
-  clearInterval(ctx.ringInterval);
-  ctx.ringInterval = null;
-
-  ctx.elements.forEach((el) => {
-    var widgetDiv = el.querySelector(".oono-widget");
-    var badgeDiv = el.querySelector(".oono-badge");
-
-    if(showBorder){
-      // hiding ring
-      widgetDiv.style.borderColor = "lightgrey";
-      widgetDiv.querySelector(".oono-svg-stroke").classList.remove("active");
-      widgetDiv.style.borderWidth = `${ctx.width/30}px`;
-      widgetDiv.style.borderStyle = "solid";
-    }else{
-      widgetDiv.style.borderStyle = "none";
     }
-    
 
-    //hide badge
-    badgeDiv.style.display = "none";
-  });
-  
-};
+  };
 
-const checkUnseenStories = (ctx) => {
-  
+  const showRing = (ctx, badge, justUnseen) => {
+
+    ctx.elements.forEach((el) => {
+      var widgetDiv = el.querySelector(".oono-widget");
+      var badgeDiv = el.querySelector(".oono-badge");
+
+      
+      badgeDiv.innerHTML = badge;
+      if (justUnseen) {
+        return false;
+      }
+      
+      badgeDiv.classList.remove("oono-hide");
+
+      widgetDiv.classList.add("show-ring");
+
+      widgetDiv.querySelector(".oono-svg-stroke").classList.remove("active");
+      widgetDiv.querySelector(".oono-svg-stroke").classList.add("active");
+
+
+
+    });
+
+  };
+
+  const hideRing = (ctx, showBorder) => {
+
+    if (typeof showBorder === 'undefined') {
+      var showBorder = true;
+    }
+    clearInterval(ctx.ringInterval);
+    ctx.ringInterval = null;
+
+    ctx.elements.forEach((el) => {
+      var widgetDiv = el.querySelector(".oono-widget");
+      var badgeDiv = el.querySelector(".oono-badge");
+      var iframeBtnDiv = el.querySelector(".oono-iframe-btn");
+
+      if (showBorder) {
+        // hiding ring
+        widgetDiv.classList.remove("show-ring");
+        iframeBtnDiv.classList.add("stories-seen");
+      }
+
+      //hide badge
+      badgeDiv.classList.add("oono-hide");
+    });
+
+  };
+
+  const checkUnseenStories = (ctx) => {
+
     if (!!ctx.requestBusy) {
-        return;
+      return;
     }
     ctx.requestBusy = true;
     if (!ctx.options.tenantId) {
-        showHideRing(ctx, null);
-        return;
+      showHideRing(ctx, null);
+      return;
     }
     var requestUrl = `${ctx.options.scheme}${ctx.options.tenantId}.${ctx.host}/api/tenant/stories/have-unseen?brand=${ctx.options.brand}`;
     var postData = {};
     if (ctx.sessionId) {
-        postData = {
-            sessionId: ctx.sessionId,
-        };
+      postData = {
+        sessionId: ctx.sessionId,
+      };
     }
 
     // Options for the fetch request
     var requestOptions = {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(postData),
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(postData),
     };
     // Send the POST request
     fetch(requestUrl, requestOptions)
-        .then((response) => response.json())
-        .then((data) => {
-            // Handle the response data here
-            //console.warn(data);
-            if (data && data.status && data.data) {
-              if(ctx.destroyed){
-                return false;
-              }
-              if(!ctx.sessionId){
-                ctx.sessionId = data.data.sessionId;
-                setIframeUrl(ctx);
-              }
-              
-              localStorage.setItem("oono-sessionId", data.data.sessionId);
-              showHideRing(ctx, data.data);
-            }
-            ctx.requestBusy = false;
-        })
-        .catch((error) => {
-            console.error("Error checking stories:", error);
-            showHideRing(ctx, null);
-            ctx.requestBusy = false;
-        }).finally(() => {
-            
-        });
-};
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response data here
+        //console.warn(data);
+        if (data && data.status && data.data) {
+          if (ctx.destroyed) {
+            return false;
+          }
+          if (!ctx.sessionId) {
+            ctx.sessionId = data.data.sessionId;
+            setIframeUrl(ctx);
+          }
 
-const setIframeUrl = (ctx, story) => {
-  if(typeof story === "undefined"){
-    var story = 0;
-  }
-  const prev = ctx.preview ? 1 : 0;
-  ctx.iframe.src = `${ctx.options.iframeURL}?brand=${ctx.options.brand}&session=${ctx.sessionId}&url=${ctx.url}&preview=${prev}&closeBtn=1&resume=0&storyId=${story}`;
-};
+          localStorage.setItem("oono-sessionId", data.data.sessionId);
+          showHideRing(ctx, data.data);
+        }
+        ctx.requestBusy = false;
+      })
+      .catch((error) => {
+        console.error("Error checking stories:", error);
+        showHideRing(ctx, null);
+        ctx.requestBusy = false;
+      }).finally(() => {
 
-const handleIframeLoaded = (ctx) => {
+      });
+  };
+
+  const setIframeUrl = (ctx, story) => {
+    if (typeof story === "undefined") {
+      var story = 0;
+    }
+    const prev = ctx.preview ? 1 : 0;
+    ctx.iframe.src = `${ctx.options.iframeURL}?brand=${ctx.options.brand}&session=${ctx.sessionId}&url=${ctx.url}&preview=${prev}&closeBtn=1&resume=0&storyId=${story}`;
+  };
+
+  const handleIframeLoaded = (ctx) => {
     if (!ctx.container) {
-        return;
+      return;
     }
     // iframe load listener
     ctx.iframe.onload = function () {
-        if (!this.src || this.src == window.location.href) {
-            return;
+      if (!this.src || this.src == window.location.href) {
+        return;
+      }
+      // The iframe has finished loading
+      if (ctx.iframeStoriesDiv) {
+        ctx.iframeLoaded = true;
+        if (ctx.openWindow) {
+          select$1(".oono-widget").forEach((el) => {
+            el.style.opacity = "1";
+          });
+          showIframe(ctx)
         }
-        // The iframe has finished loading
-        if (ctx.iframeStoriesDiv) {
-            ctx.iframeLoaded = true;
-            if (ctx.openWindow) {
-              // console.log("timeout 4");
-                setTimeout(() => {
-                  // console.log("loaded", ctx.container);
-                  select$1(".oono-widget").forEach((el) => {
-                    el.style.opacity = "1";
-                  });
-                  showIframe(ctx)
-                }, 200);
-            }
 
-        }
+      }
     };
-};
+  };
 
 
 
-const appendHtml = (ctx) => {
-  ctx.elements.forEach((element) => {
-    element.innerHTML = "";
-    element.appendChild(ctx.widgetDiv.cloneNode(true));
-    element.querySelector(".oono-open-story-button").onclick = ctx.openStoryButton.onclick;
-  })
-  // ctx.elements[0].appendChild(ctx.iframeStoriesDiv);
-  document.body.appendChild(ctx.iframeStoriesDiv);
-}
+  const appendHtml = (ctx) => {
+    ctx.elements.forEach((element) => {
+      element.innerHTML = "";
+      element.appendChild(ctx.widgetDiv.cloneNode(true));
+      element.querySelector(".oono-open-story-button").onclick = ctx.openStoryButton.onclick;
+    })
+    // ctx.elements[0].appendChild(ctx.iframeStoriesDiv);
+    document.body.appendChild(ctx.iframeStoriesDiv);
+  }
 
-const onMessageEvent =  (event, ctx) => {
-  // Check if the message is from the iframe
-  if (event.source === ctx.iframe.contentWindow) {
+  const onMessageEvent = (event, ctx) => {
+    // Check if the message is from the iframe
+    if (event.source === ctx.iframe.contentWindow) {
       // Log the message sent from the iframe
       if (event.data == 'Escape') {
-          closeWindow(ctx);
+        closeWindow(ctx);
       }
       // return;
-      if(event.data.dragend){
-        if(event.data.dragend > 200){
+      if (event.data.dragend) {
+        if (event.data.dragend > 200) {
           closeWindow(ctx);
           return;
         }
@@ -451,181 +384,176 @@ const onMessageEvent =  (event, ctx) => {
         ctx.iframeStoriesDiv.style.borderRadius = `0px`;
         ctx.iframeStoriesDiv.style.transition = ``;
       }
-      const offset = parseInt(event.data.drag/1.4);
-      if(offset > 0){
-        const scale = 1 - offset*0.6/800;
+      const offset = parseInt(event.data.drag / 1.4);
+      if (offset > 0) {
+        const scale = 1 - offset * 0.6 / 800;
         ctx.iframeStoriesDiv.style.transform = `translate3d(0px, ${offset}px, 0px) scale(${scale})`;
         ctx.iframeStoriesDiv.style.borderRadius = `10px`;
       }
+    }
   }
-}
 
-const onKeydownEvent = (evt, ctx) => {
-  // console.log("key down", evt)
-  // send event to iframe
-  ctx.iframe.contentWindow.postMessage(evt.code, `${ctx.options.iframeURL}`);
+  const onKeydownEvent = (evt, ctx) => {
+    // console.log("key down", evt)
+    // send event to iframe
+    ctx.iframe.contentWindow.postMessage(evt.code, `${ctx.options.iframeURL}`);
 
-}
+  }
 
-const addEventListeners = (ctx) => {
-  console.log("Adding events");
-  const evt1 = (event) => {
-    onMessageEvent(event, ctx);
+  const addEventListeners = (ctx) => {
+    // console.log("Adding events");
+    const evt1 = (event) => {
+      onMessageEvent(event, ctx);
+    };
+
+    const evt2 = (event) => {
+      onKeydownEvent(event, ctx);
+    };
+
+    window.addEventListener('message', evt1);
+    // close window on escape
+    document.addEventListener("keydown", evt2);
+
   };
 
-  const evt2 = (event) => {
-    onKeydownEvent(event, ctx);
+  const removeEventListeners = (ctx) => {
+    // console.log("Removing events");
+    const evt1 = (event) => {
+      onMessageEvent(event, ctx);
+    };
+
+    const evt2 = (event) => {
+      onKeydownEvent(event, ctx);
+    };
+
+    window.removeEventListener('message', evt1);
+    // close window on escape
+    document.removeEventListener("keydown", evt2);
   };
 
-  window.addEventListener('message', evt1);
-  // close window on escape
-  document.addEventListener("keydown", evt2);
-
-};
-
-const removeEventListeners = (ctx) => {
-  console.log("Removing events");
-  const evt1 = (event) => {
-    onMessageEvent(event, ctx);
+  const fetchConfig = async (ctx) => {
+    try {
+      const requestUrl = `${ctx.options.scheme}${ctx.options.tenantId}.${ctx.host}/api/tenant/get-snippet/${ctx.uuid}?sessionId=${ctx.sessionId}&first=${ctx.firstLoad}`;
+      const response = await fetch(requestUrl);
+      if (!response.ok) {
+        throw new Error('Failed to fetch config');
+      }
+      const data = await response.json();
+      if (data && data.status && data.data) {
+        return data.data;
+      } else {
+        throw new Error('Invalid data received');
+      }
+    } catch (error) {
+      console.error('Error fetching config:', error);
+      return null;
+    }
   };
 
-  const evt2 = (event) => {
-    onKeydownEvent(event, ctx);
-  };
-
-  window.removeEventListener('message', evt1);
-  // close window on escape
-  document.removeEventListener("keydown", evt2);
-};
-
-const fetchConfig = async (ctx) => {
-
-
-  
-  
-  var requestUrl = `${ctx.options.scheme}${ctx.options.tenantId}.${ctx.host}/api/tenant/get-snippet/${ctx.uuid}?sessionId=${ctx.sessionId}&first=${ctx.firstLoad}`;
-  let res = null;
-  // Send the GET request
-  await fetch(requestUrl)
-      .then((response) => response.json())
-      .then((data) => {
-          if (data && data.status && data.data) {
-            res = data.data;
-          }
-      })
-      .catch((error) => {
-        console.log("error fetching config", error)
-      }).finally(() => {
-      });
-      return res;
-};
-
-const doRefresh = async (ctx)  => {
-  if(!alreadyInitialized(ctx)){
-    return false;
-  }
-  console.log("refreshing");
-  const data = await fetchConfig(ctx);
-  if(!data){
-    return false;
-  }
-  if(ctx.destroyed){
-    return;
-  }
-  if(data.logoURL != ctx.options.logoURL){
-    ctx.options = data;
-    return init(ctx, false);
-  }
-  ctx.options.firstToWatch = data.firstToWatch;
-  if(data.firstToWatch){
-    // removed due to an issue
-    //setStoryId(ctx, data.firstToWatch);
-  }
-  if(data.activeStoriesCount != ctx.options.activeStoriesCount || 
-    data.unseenCount != ctx.options.unseenCount){
+  const doRefresh = async (ctx) => {
+    if (!alreadyInitialized(ctx)) {
+      return false;
+    }
+    console.log("refreshing ring");
+    const data = await fetchConfig(ctx);
+    if (!data) {
+      return false;
+    }
+    if (ctx.destroyed) {
+      return;
+    }
+    if (data.logoURL != ctx.options.logoURL) {
+      ctx.options = data;
+      return init(ctx, false);
+    }
+    ctx.options.firstToWatch = data.firstToWatch;
+    if (data.firstToWatch) {
+      // removed due to an issue
+      //setStoryId(ctx, data.firstToWatch);
+    }
+    if (data.activeStoriesCount != ctx.options.activeStoriesCount ||
+      data.unseenCount != ctx.options.unseenCount) {
       ctx.options.activeStoriesCount = data.activeStoriesCount;
       ctx.options.unseenCount = data.unseenCount;
       showHideRing(ctx, data);
+    }
   }
-}
 
-const refresh = async (ctx)  => {
-  if(!alreadyInitialized(ctx)){
-    return false;
+  const refresh = async (ctx) => {
+    if (!alreadyInitialized(ctx)) {
+      return false;
+    }
+    if (ctx.destroyed) {
+      return;
+    }
+    if (!ctx.openWindow) {
+      await doRefresh(ctx);
+    }
+    var refTimer = debounce(() => {
+      refresh(ctx)
+    }, ctx.refreshTimer)
+    if (ctx.autoRefresh) {
+      refTimer();
+    }
   }
-  if(ctx.destroyed){
+
+  const destroy = (ctx) => {
+    for (var i = 0; i < ctx.elements.length; i++) {
+      ctx.elements[i].dataset.initialized = false;
+      ctx.elements[i].innerHTML = "";
+    }
+    ctx.destroyed = true;
+    clearInterval(ctx.ringInterval);
+    removeEventListeners(ctx);
+
     return;
   }
-  if(!ctx.openWindow){
-    await doRefresh(ctx);
-  }
-  var refTimer = debounce(() =>{
-    refresh(ctx)
-  },ctx.refreshTimer)
-  if(ctx.autoRefresh){
-    refTimer();
-  }
-}
 
-const destroy = (ctx) => {
-  for(var i = 0; i< ctx.elements.length; i++ ){
-    ctx.elements[i].dataset.initialized = false;
-    ctx.elements[i].innerHTML = "";
-  }
-  ctx.destroyed  = true;
-  clearInterval(ctx.ringInterval);
-  removeEventListeners(ctx);
-  
-  return;
-}
-  
-  const init =  (ctx, allowRefresh = true) => {
-    ctx.destroyed  = false;
+  const init = (ctx, allowRefresh = true) => {
+    ctx.destroyed = false;
     // return new Promise(function ($return, $error) {
-      createMainWidget(ctx);
-      createRing(ctx);
-      createBadgeDiv(ctx);
-      createIframeBtnDiv(ctx);
-      createOpenStoryBtn(ctx);
-      createIframeStoriesDiv(ctx);
-      createIframe(ctx);
-      createCssClass(ctx);
-      handleIframeLoaded(ctx);
-      appendHtml(ctx);
-      addEventListeners(ctx);
-      // console.log("timeout 5");
-      setTimeout(() => {
-          if (ctx.options.activeStoriesCount) {
-              checkUnseenStories(ctx);
-          }else{
-            showHideRing(ctx, null);
-          }
-      }, 200);
-      if(allowRefresh){
-        var autoRefresh = debounce(() =>{
-          refresh(ctx)
-        },ctx.refreshTimer)
-        if(ctx.autoRefresh){
-          autoRefresh();
-        }
+    createMainWidget(ctx);
+    createRing(ctx);
+    createBadgeDiv(ctx);
+    createIframeBtnDiv(ctx);
+    createOpenStoryBtn(ctx);
+    createIframeStoriesDiv(ctx);
+    createIframe(ctx);
+    createCssClasses(ctx);
+    handleIframeLoaded(ctx);
+    appendHtml(ctx);
+    addEventListeners(ctx);
+    if (ctx.options.activeStoriesCount) {
+      checkUnseenStories(ctx);
+    } else {
+      showHideRing(ctx, null);
+    }
+    if (allowRefresh) {
+      
+      var autoRefresh = debounce(() => {
+        refresh(ctx)
+      }, ctx.refreshTimer)
+      if (ctx.autoRefresh) {
+        autoRefresh();
       }
-      
-      
+    }
+
+
     // });
   }
 
   const setStoryId = (ctx, id) => {
-    if(ctx.openWindow){
+    if (ctx.openWindow) {
       return console.warn("window opened!");
     }
-    if(!ctx.iframe){
+    if (!ctx.iframe) {
       return console.error("iframe not exists");
     }
     //setIframeUrl(ctx, id);
     ctx.activeStory = id;
   }
 
-  function extend (oonoStories) {
+  function extend(oonoStories) {
     var prototype = oonoStories.prototype;
     prototype.init = function () {
       init(this);
@@ -640,7 +568,7 @@ const destroy = (ctx) => {
       setStoryId(this, storyId)
     };
     prototype.open = function () {
-      if(!this.openStoryButton){
+      if (!this.openStoryButton) {
         return console.error('No open button found');
       }
       this.openStoryButton.click();
@@ -651,109 +579,272 @@ const destroy = (ctx) => {
     };
   }
 
-  const createCssClass = (ctx) => {
+  const createCssClasses = (ctx) => {
     var style = create('style', {});
     style.type = 'text/css';
     style.innerHTML = `
-      .oono-open { overflow: hidden !important; }
 
-      .oono-svg-stroke{
-        position: absolute;
-        width: calc(100% + ${parseInt(ctx.width/8)}px);
-        height: calc(100% + ${parseInt(ctx.width/8)}px);
-        top: -${parseInt(ctx.width/16)}px;
-        left: -${parseInt(ctx.width/16)}px;
-        box-sizing: border-box;
-        display:none;
-        transform: scaleX(-1);
-      }
-      .oono-svg-stroke.active{
-        display:block;
-      }
-      .oono-svg-stroke svg{
-        fill:none;
-        stroke:red;
-        stroke-linecap: round;
-        stroke-width:${parseInt(ctx.width/15)}px;
-        stroke-dasharray: 1;
-        stroke-dashoffset: 0;
-        animation: stroke-draw 3s ease-in-out alternate; 
-        transform: rotate(-1000deg);
+      :root {
+        --oono-width: ${ctx.width}px;
+        --oono-height: ${ctx.height}px;
+        --oono-font-size: ${ctx.width / 5}px;
+        --oono-logo-wax-width: ${logoMaxWidth};
       }
 
-      .oono-badge{
-        animation: bubble .3s ease-in-out alternate; 
+      .oono-widget {
+          position: relative;
+          cursor: pointer;
+          width: 100%;
+          height: 100%;
+          box-sizing: border-box;
       }
-
-      .close-window{
-        animation: close-window .3s ease-in-out alternate; 
+      
+      .oono-widget.show-circle {
+          border: 2px solid transparent;
+          border-radius: 50%;
+          overflow: hidden;
+          height: var(--oono-height);
+          width: var(--oono-width);
       }
-
+      
+      .oono-widget.hide-circle {
+          height: auto;
+          width: auto;
+      }
+      
+      .oono-widget.no-stories {
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: var(--oono-height);
+          width: var(--oono-width);
+      }
+      
+      
+      .oono-badge {
+          display: flex;
+          box-sizing: border-box;
+          width: 33%;
+          height: 33%;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          background: red;
+          top: 0;
+          right: 0;
+          padding: 0px;
+          border-radius: 50%;
+          color: white;
+          font-size: var(--oono-font-size);
+          line-height: var(--oono-font-size);
+          font-weight: bold;
+          font-family: system-ui;
+          z-index: 1;
+      }
+      
+      
+      .oono-iframe-btn {
+          width: 100%;
+          height: auto;
+          box-sizing: border-box;
+      }
+      
+      .oono-iframe-btn.active-stories {
+          box-sizing: border-box;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          padding: 9%;
+      }
+      
+      .oono-iframe-btn.active-stories.stories-seen {
+          border: solid 2px lightgray;
+          padding: calc(9% - 2px);
+      }
+      
+      .oono-open-story-button {
+          box-sizing: border-box;
+          width: 100%;
+          height: auto;
+      }
+      
+      .oono-open-story-button.active-stories {
+          box-sizing: border-box;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          border: solid 1px lightgrey;
+      }
+      
+      .logo-img {
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+          max-width: var(--oono-logo-wax-width);
+          scale: 1.05;
+      }
+      
+      .logo-img.show-circle {
+          height: 100%;
+      }
+      
+      .oono-iframe-stories {
+          overflow: hidden;
+          box-sizing: border-box;
+          position: fixed;
+          top: 0px;
+          left: 0px;
+          width: 100vw;
+          height: 100%;
+          z-index: 999999999;
+          border: none;
+          outline: 0px;
+          padding: 0px;
+          margin: 0px;
+          margin-left: auto;
+          margin-right: auto;
+          bottom: constant(safe-area-inset-bottom);
+          bottom: env(safe-area-inset-bottom);
+      }
+      
+      .oono-iframe {
+          box-sizing: border-box;
+          top: 0px;
+          left: 0px;
+          width: 100%;
+          height: 100%;
+          border: none;
+          outline: 0px;
+          padding: 0px;
+          margin: 0px;
+      }
+      
+      .oono-hide {
+          display: none !important;
+      }
+      
+      
+      
+      
+      
+      .oono-open {
+          overflow: hidden !important;
+      }
+      
+      .oono-svg-stroke {
+          position: absolute;
+          width: calc(100%);
+          height: calc(100%);
+          top: 0;
+          left: 0;
+          box-sizing: border-box;
+          display: none;
+          transform: scaleX(-1);
+      }
+      
+      .show-ring .oono-svg-stroke {
+          display: block;
+      }
+      
+      .oono-svg-stroke svg {
+          fill: none;
+          stroke: red;
+          stroke-linecap: round;
+          stroke-width: 5%;
+          /* stroke-dasharray: 50;  */
+          /* stroke-dashoffset: 0; */
+          /* animation: stroke-draw 3s ease-in-out alternate; */
+      }
+      
+      .oono-badge {
+          animation: bubble .3s ease-in-out alternate;
+          /* animation-delay: 2.5s; */
+          animation-fill-mode: both;
+      }
+      
+      
+      
+      .close-window {
+          animation: close-window .3s ease-in-out alternate;
+      }
+      
       @keyframes stroke-draw {
-        0%{
-          stroke-dasharray: 20;
-          transform: rotate(0deg);
-        }
-       
-        50%{
-          transform: rotate(-360deg);
-        }
-        100%{ 
-          stroke-dasharray: 0;
-          transform: rotate(-720deg);          
-        }
+          0% {
+              stroke-dasharray: 20;
+              transform: rotate(0deg);
+          }
+      
+          100% {
+              stroke-dasharray: 0;
+              transform: rotate(-720deg);
+          }
       }
-
+      
       @keyframes bubble {
-        0%{
-          transform: scale(0);
-        }
-        50%{
-          transform: scale(1.8);
-        }
-        75%{
-          transform: scale(0.4);
-        }
-        100%{ 
-          transform: scale(1);
-        }
+          0% {
+              transform: scale(0);
+          }
+      
+          50% {
+              transform: scale(1.8);
+          }
+      
+          75% {
+              transform: scale(0.4);
+          }
+      
+          100% {
+              transform: scale(1);
+          }
       }
-
+      
       @keyframes close-window {
-        0%{
-          display:none;
-          border-radius:50%;
-          opacity:0.2;
-          transform: translate(0, 20%);
-        }
-        25%{ 
-          opacity:0.15;
-          border-radius:50%;
-          transform: translate(0, 30%);
-        }
-        50%{ 
-          opacity:0.10;
-          border-radius:50%;
-          transform: translate(0, 20%);
-        }
-        75%{ 
-          opacity:0.05;
-          border-radius:50%;
-          
-
-        }
-        100%{ 
-          display:none;
-          width:0;
-          height:0;
-          opacity: 0;
-          border-radius:50%;
-          
-        }
-        
+          0% {
+              display: none;
+              border-radius: 50%;
+              opacity: 0.2;
+              transform: translate(0, 20%);
+          }
+      
+          25% {
+              opacity: 0.15;
+              border-radius: 50%;
+              transform: translate(0, 30%);
+          }
+      
+          50% {
+              opacity: 0.10;
+              border-radius: 50%;
+              transform: translate(0, 20%);
+          }
+      
+          75% {
+              opacity: 0.05;
+              border-radius: 50%;
+      
+      
+          }
+      
+          100% {
+              display: none;
+              width: 0;
+              height: 0;
+              opacity: 0;
+              border-radius: 50%;
+      
+          }
+      
       }
+      
     `;
     document.getElementsByTagName('head')[0].appendChild(style);
+
+    
   };
 
   const closeWindow = (ctx) => {
@@ -761,11 +852,9 @@ const destroy = (ctx) => {
     body.classList.remove("oono-open");
 
     ctx.openWindow = false;
-    //var w = ctx.elements[0].querySelector(".oono-widget").offsetWidth;
-    //var h = ctx.elements[0].querySelector(".oono-widget").offsetHeight;
 
-    var top = ctx.clickOffset.y ;//+ h/2;
-    var left = ctx.clickOffset.x ;//+ w/2;
+    var top = ctx.clickOffset.y;;
+    var left = ctx.clickOffset.x;;
 
     ctx.iframeStoriesDiv.classList.add("close-window");
     ctx.iframe.style.width = `100%`;
@@ -773,64 +862,56 @@ const destroy = (ctx) => {
 
     ctx.iframeStoriesDiv.style.width = `100vw`;
     ctx.iframeStoriesDiv.style.height = `100vw`;
-    // setTimeout(() => {
-      ctx.iframeStoriesDiv.style.transform = `translate3d(${left}px,${top}px, 0)`;
-      // ctx.iframeStoriesDiv.style.transition = `transform ease 0.1s`;
-    // }, 800)
-    // console.log("timeout 6");
-    // setTimeout(() => {
-      ctx.iframeStoriesDiv.classList.remove("close-window");
-      ctx.iframeStoriesDiv.style.display = "none";
-      ctx.iframeStoriesDiv.style.transform = ``;
-      ctx.iframeStoriesDiv.style.transition = ``;
+    ctx.iframeStoriesDiv.style.transform = `translate3d(${left}px,${top}px, 0)`;
    
-      ctx.iframeStoriesDiv.style.width = `100vw`;
-      ctx.iframeStoriesDiv.style.height = `100vh`;
-    // }, 300)
+    ctx.iframeStoriesDiv.classList.remove("close-window");
+    ctx.iframeStoriesDiv.style.display = "none";
+    ctx.iframeStoriesDiv.style.transform = ``;
+    ctx.iframeStoriesDiv.style.transition = ``;
+
+    ctx.iframeStoriesDiv.style.width = `100vw`;
+    ctx.iframeStoriesDiv.style.height = `100vh`;
     checkUnseenStories(ctx);
-    if(!!ctx.preview){
+    if (!!ctx.preview) {
       return;
     }
-    //setIframeUrl(ctx);
-    
+
   }
 
   const findParentContainer = (btn, className) => {
     var parent = btn.parentNode;
-      // Loop until we find a parent element with the desired class or until we reach the top of the DOM
-      while (parent !== null && !parent.classList.contains(className)) {
-          parent = parent.parentNode;
-          if(parent.classList.contains(className)){
-            return parent;
-          }
+    // Loop until we find a parent element with the desired class or until we reach the top of the DOM
+    while (parent !== null && !parent.classList.contains(className)) {
+      parent = parent.parentNode;
+      if (parent.classList.contains(className)) {
+        return parent;
       }
-      
-      return parent.parentNode;
+    }
+
+    return parent.parentNode;
   };
 
   const openWindow = (ctx, btn) => {
     if (ctx.iframeStoriesDiv) {
       var parentContainer = findParentContainer(btn, "oono-widget");
-      if(!parentContainer){
+      if (!parentContainer) {
         return console.error("no parent container found");
       }
       const body = select$1("html")[0];
       body.classList.add("oono-open");
       parentContainer.style.opacity = "0.5";
-        ctx.openWindow = true;
-        if (ctx.iframeLoaded && ctx.sessionId) {
-          // console.log("timeout 7");
-            setTimeout(() => {
-              parentContainer.style.opacity = "1";
-              showIframe(ctx);
-            }, 200);
-        }
+      ctx.openWindow = true;
+      if (ctx.iframeLoaded && ctx.sessionId) {
+        parentContainer.style.opacity = "1";
+        showIframe(ctx);
+      }
     }
   }
 
   const showIframe = (ctx) => {
     ctx.iframeStoriesDiv.style.display = "inline-block";
-    ctx.iframe.contentWindow.postMessage({type: 'resume', storyId: ctx.activeStory}, `${ctx.options.iframeURL}`);
+    ctx.iframeStoriesDiv.classList.remove("oono-hide");
+    ctx.iframe.contentWindow.postMessage({ type: 'resume', storyId: ctx.activeStory }, `${ctx.options.iframeURL}`);
     ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 0px, 0px)`;
   }
 
@@ -849,22 +930,22 @@ const destroy = (ctx) => {
 
   const getSessionId = () => {
     let session = localStorage.getItem("oono-sessionId");
-    if(!session){
+    if (!session) {
       session = makeSessionId(15);
     }
     return session;
   };
 
   const alreadyInitialized = (ctx) => {
-    for(var i = 0; i< ctx.elements.length; i++ ){
-      if(!ctx.elements[i].dataset.initialized || ctx.elements[i].dataset.initialized == 'false'){
+    for (var i = 0; i < ctx.elements.length; i++) {
+      if (!ctx.elements[i].dataset.initialized || ctx.elements[i].dataset.initialized == 'false') {
         return false;
       }
     }
     return true;
   }
   const addInitialized = (ctx) => {
-    for(var i = 0; i< ctx.elements.length; i++ ){
+    for (var i = 0; i < ctx.elements.length; i++) {
       ctx.elements[i].dataset.initialized = true;
     }
     return true;
@@ -873,11 +954,11 @@ const destroy = (ctx) => {
   const filterUninitializedElements = (ctx) => {
     ctx.elements = Array.from(ctx.elements).filter(el => (!el.dataset.initialized || el.dataset.initialized == 'false'));
   };
-  
+
 
   const doInit = async (ctx) => {
 
-    
+
 
     // push the object to the objects list
     ctx.elements[0].oonoStories = ctx;
@@ -900,57 +981,58 @@ const destroy = (ctx) => {
     ctx.refreshTimer = ctx.options.refreshTimer ? ctx.options.refreshTimer : refreshTimer;
     extend.call(ctx, oonoStories);
     ctx.firstLoad = 0;
-    if(!ctx.preview){
+    if (!ctx.preview) {
       ctx.firstLoad = 1;
     }
+
     const data = await fetchConfig(ctx);
-    if(!data){
-      console.error(`invalid config`);
+    if (!data) {
+      console.error('Invalid config');
       return false;
     }
+
     ctx.options = data;
-    
     ctx.firstLoad = 0;
-    
-    
+
     // debug
     // ctx.options.iframeURL = "http://oono.myoono.local:3000/";
-    if(ctx.destroyed){
+    if (ctx.destroyed) {
       return ctx;
     }
     init(ctx);
     return ctx;
+
   }
 
   const initSelector = (ctx) => {
-    if(!ctx.options.tenantId){
+    if (!ctx.options.tenantId) {
       console.error(`invalid tenant id `);
       return false;
     }
-    
-    if(!ctx.options.widgetId){
+
+    if (!ctx.options.widgetId) {
       console.error(`invalid widget id `);
       return false;
     }
     ctx.selector = ctx.options.selector || "#" + ctx.options.containerId;
 
-    if(!ctx.selector){
+    if (!ctx.selector) {
       console.error(`invalid selector ${ctx.selector}`);
       return false;
     }
     ctx.uuid = ctx.options.widgetId;
     ctx.elements = select$1(ctx.selector);
-    if(!ctx.elements.length){
+    if (!ctx.elements.length) {
       console.error(`element does not exists: ${ctx.selector} `);
       return false;
-    }    
+    }
 
-    return true;    
-   
+    return true;
+
   }
   oonoStories.items = [];
   function oonoStories(config) {
-    if(typeof this === "undefined"){
+    if (typeof this === "undefined") {
       return false;
     }
     this.options = typeof config === "undefined" ? defaultConfig : config;
@@ -960,11 +1042,11 @@ const destroy = (ctx) => {
     var _this = this;
     let initStatus = initSelector(this);
 
-    if(!initStatus){
+    if (!initStatus) {
       return;
     }
-    
-    if(alreadyInitialized(this)){
+
+    if (alreadyInitialized(this)) {
       console.warn(`the oono element has already been initialized`);
       return this.elements[0].oonoStories;
     }

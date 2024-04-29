@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.1.3
+ * oono JavaScript Library v1.1.4
  *
  * Copyright wecansync
  *
@@ -23,6 +23,8 @@
     defaultContainerId = "oono-container",
     defaultHost = "oono.ai",
     ringInterval = null,
+    // ringUrl = 'ring-small.gif',
+    ringUrl = 'https://oono.ai/assets/images/oono-ring.gif',
 
     defaultConfig = {
       containerId: defaultContainerId,
@@ -85,11 +87,17 @@
 
     var svg = create("div", {});
     svg.className = "oono-svg-stroke";
-    var inner = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="enable-background:new -580 439 577.9 194;"
-                  xml:space="preserve">  
-                <circle cx="50" cy="50" r="46" />
-              </svg>`;
-    svg.innerHTML = inner;
+    // var inner = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="enable-background:new -580 439 577.9 194;"
+    //               xml:space="preserve">  
+    //             <circle cx="50" cy="50" r="46" />
+    //           </svg>`;
+    // svg.innerHTML = inner;
+    // ctx.widgetDiv.appendChild(svg);
+    
+    ctx.ringImg = create("img", {});
+    ctx.ringImg.className = "oono-ring-animation";
+    ctx.ringImg.src = ringUrl;
+    svg.appendChild(ctx.ringImg);
     ctx.widgetDiv.appendChild(svg);
   };
 
@@ -210,6 +218,7 @@
     ctx.elements.forEach((el) => {
       var widgetDiv = el.querySelector(".oono-widget");
       var badgeDiv = el.querySelector(".oono-badge");
+      var ring = el.querySelector(".oono-ring-animation");
 
       
       badgeDiv.innerHTML = badge;
@@ -218,10 +227,16 @@
       }
       
 
-      widgetDiv.classList.add("show-ring");
-      widgetDiv.classList.add("with-stories");
-      widgetDiv.classList.remove("stories-seen");
+      widgetDiv.classList.remove("show-ring");
+      setTimeout(() => {
+        widgetDiv.classList.add("show-ring");
+        widgetDiv.classList.add("with-stories");
+        widgetDiv.classList.remove("stories-seen");
+      }, 100);
+      
      
+      // restart animation
+      ring.src = ring.src;
 
     });
 
@@ -596,8 +611,8 @@
       ${ctx.selector} .oono-badge {
           display: none;
           box-sizing: border-box;
-          width: 33%;
-          height: 33%;
+          width: 28%;
+          height: 28%;
           align-items: center;
           justify-content: center;
           position: absolute;
@@ -719,7 +734,14 @@
           left: 0;
           box-sizing: border-box;
           display: none;
-          transform: scaleX(-1);
+      }
+
+      ${ctx.selector} .oono-svg-stroke img{
+        width: 100%;
+        height: 100%;
+        position: relative;
+        top: 0;
+        left: 0;
       }
       
       ${ctx.selector} .show-ring .oono-svg-stroke {
@@ -734,11 +756,12 @@
           /* stroke-dasharray: 50;  */
           /* stroke-dashoffset: 0; */
           /* animation: stroke-draw 3s ease-in-out alternate; */
+          display:none;
       }
       
       ${ctx.selector} .oono-badge {
           animation: bubble .3s ease-in-out alternate;
-          /* animation-delay: 2.5s; */
+          animation-delay: 3.5s;
           animation-fill-mode: both;
       }
       

@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.1.4
+ * oono JavaScript Library v1.1.5
  *
  * Copyright wecansync
  *
@@ -23,8 +23,8 @@
     defaultContainerId = "oono-container",
     defaultHost = "oono.ai",
     ringInterval = null,
-    // ringUrl = 'ring-small.gif',
-    ringUrl = 'https://oono.ai/assets/images/oono-ring.gif',
+    // ringUrl = 'ring-v2-small.gif',
+    ringUrl = 'https://oono.ai/assets/images/oono-ring-v2-small.gif',
 
     defaultConfig = {
       containerId: defaultContainerId,
@@ -393,7 +393,7 @@
   const onKeydownEvent = (evt, ctx) => {
     // console.log("key down", evt)
     // send event to iframe
-    ctx.iframe.contentWindow.postMessage(evt.code, `${ctx.options.iframeURL}`);
+    postMessage(ctx, { type: evt.code });
 
   }
 
@@ -571,7 +571,7 @@
       this.openStoryButton.click();
     };
     prototype.close = function () {
-      this.iframe.contentWindow.postMessage("Escape", `${this.options.iframeURL}`);
+      postMessage(this, { type: "Escape" });
       closeWindow(this);
     };
   }
@@ -761,7 +761,7 @@
       
       ${ctx.selector} .oono-badge {
           animation: bubble .3s ease-in-out alternate;
-          animation-delay: 3.5s;
+          animation-delay: 2s;
           animation-fill-mode: both;
       }
       
@@ -909,8 +909,13 @@
   const showIframe = (ctx) => {
     ctx.iframeStoriesDiv.style.display = "inline-block";
     ctx.iframeStoriesDiv.classList.remove("oono-hide");
-    ctx.iframe.contentWindow.postMessage({ type: 'resume', storyId: ctx.activeStory }, `${ctx.options.iframeURL}`);
+    postMessage(ctx, { type: 'resume', storyId: ctx.activeStory });
     ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 0px, 0px)`;
+  }
+
+  const postMessage = (ctx, data) => {
+    data.tenant = ctx.options.tenantId;
+    ctx.iframe.contentWindow.postMessage(data, `${ctx.options.iframeURL}`);
   }
 
   const makeSessionId = (length) => {

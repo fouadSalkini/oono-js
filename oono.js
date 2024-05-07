@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.1.5
+ * oono JavaScript Library v1.1.6
  *
  * Copyright wecansync
  *
@@ -690,7 +690,7 @@
           top: 0px;
           left: 0px;
           width: 100vw;
-          height: 100%;
+          height: 100vh;
           z-index: 999999999;
           border: none;
           outline: 0px;
@@ -715,7 +715,7 @@
       }
       
       .oono-hide {
-          display: none !important;
+        visibility:hidden !important;
       }
       
       
@@ -857,18 +857,16 @@
     ctx.iframeStoriesDiv.classList.add("close-window");
     ctx.iframe.style.width = `100%`;
     ctx.iframe.style.height = `100%`;
-
+    ctx.iframeStoriesDiv.classList.add("oono-hide");
     ctx.iframeStoriesDiv.style.width = `100vw`;
-    ctx.iframeStoriesDiv.style.height = `100vw`;
+    ctx.iframeStoriesDiv.style.height = `100vh`;
+
     ctx.iframeStoriesDiv.style.transform = `translate3d(${left}px,${top}px, 0)`;
    
     ctx.iframeStoriesDiv.classList.remove("close-window");
-    ctx.iframeStoriesDiv.style.display = "none";
     ctx.iframeStoriesDiv.style.transform = ``;
     ctx.iframeStoriesDiv.style.transition = ``;
 
-    ctx.iframeStoriesDiv.style.width = `100vw`;
-    ctx.iframeStoriesDiv.style.height = `100vh`;
     checkUnseenStories(ctx);
     if (!!ctx.preview) {
       return;
@@ -907,7 +905,6 @@
   }
 
   const showIframe = (ctx) => {
-    ctx.iframeStoriesDiv.style.display = "inline-block";
     ctx.iframeStoriesDiv.classList.remove("oono-hide");
     postMessage(ctx, { type: 'resume', storyId: ctx.activeStory });
     ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 0px, 0px)`;

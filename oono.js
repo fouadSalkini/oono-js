@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.1.6
+ * oono JavaScript Library v1.1.7
  *
  * Copyright wecansync
  *
@@ -326,7 +326,8 @@
       var story = 0;
     }
     const prev = ctx.preview ? 1 : 0;
-    ctx.iframe.src = `${ctx.options.iframeURL}?brand=${ctx.options.brand}&session=${ctx.sessionId}&url=${ctx.url}&preview=${prev}&closeBtn=1&resume=0&storyId=${story}`;
+    const rtl = ctx.options.is_rtl ? 1 : 0;
+    ctx.iframe.src = `${ctx.options.iframeURL}?brand=${ctx.options.brand}&session=${ctx.sessionId}&url=${ctx.url}&preview=${prev}&closeBtn=1&resume=0&storyId=${story}&rtl=${rtl}`;
   };
 
   const handleIframeLoaded = (ctx) => {

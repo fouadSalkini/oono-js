@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.1.7
+ * oono JavaScript Library v1.1.8
  *
  * Copyright wecansync
  *
@@ -646,12 +646,12 @@
           width: 100%;
           height: 100%;
           border-radius: 50%;
-          padding: 9%;
+          padding: 6px;
       }
       
       ${ctx.selector} .with-stories.stories-seen .oono-iframe-btn {
           border: solid 2px lightgray;
-          padding: calc(9% - 2px);
+          padding: 4px;
       }
       
       ${ctx.selector} .oono-open-story-button {

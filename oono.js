@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.1.8
+ * oono JavaScript Library v1.1.9
  *
  * Copyright wecansync
  *
@@ -584,6 +584,7 @@
     const height = `${ctx.height}px`;
     const fontSize = `${ctx.width / 5}px`;
     const maxWidth = `${logoMaxWidth}px`;
+    const padding = `${parseInt(ctx.width / 10)}px`;
     style.innerHTML = `
 
      
@@ -646,12 +647,12 @@
           width: 100%;
           height: 100%;
           border-radius: 50%;
-          padding: 6px;
+          padding: ${padding};
       }
       
       ${ctx.selector} .with-stories.stories-seen .oono-iframe-btn {
           border: solid 2px lightgray;
-          padding: 4px;
+          padding: calc(${padding} - 2px);
       }
       
       ${ctx.selector} .oono-open-story-button {

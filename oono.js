@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.1.10
+ * oono JavaScript Library v1.1.11
  *
  * Copyright wecansync
  *
@@ -692,7 +692,7 @@
           top: 0px;
           left: 0px;
           width: 100vw;
-          height: 100vh;
+          height: 100%;
           z-index: 999999999;
           border: none;
           outline: 0px;
@@ -861,7 +861,7 @@
     ctx.iframe.style.height = `100%`;
     ctx.iframeStoriesDiv.classList.add("oono-hide");
     ctx.iframeStoriesDiv.style.width = `100vw`;
-    ctx.iframeStoriesDiv.style.height = `100vh`;
+    ctx.iframeStoriesDiv.style.height = `100%`;
 
     ctx.iframeStoriesDiv.style.transform = `translate3d(${left}px,${top}px, 0)`;
    

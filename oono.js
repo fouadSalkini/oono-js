@@ -589,7 +589,7 @@
 
      
       .oono-overflow-hidden, .oono-overflow-hidden *{
-        overflow: hidden;
+        overflow: hidden !important;
       }
 
       ${ctx.selector} .oono-widget {

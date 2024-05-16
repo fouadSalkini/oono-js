@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.1.11
+ * oono JavaScript Library v1.1.12
  *
  * Copyright wecansync
  *
@@ -588,6 +588,9 @@
     style.innerHTML = `
 
      
+      .oono-overflow-hidden, .oono-overflow-hidden *{
+        overflow: hidden;
+      }
 
       ${ctx.selector} .oono-widget {
           position: relative;
@@ -850,7 +853,7 @@
   const closeWindow = (ctx) => {
     const body = select$1("html")[0];
     body.classList.remove("oono-open");
-
+    body.classList.remove('oono-overflow-hidden');
     ctx.openWindow = false;
 
     var top = ctx.clickOffset.y;;
@@ -910,6 +913,8 @@
     ctx.iframeStoriesDiv.classList.remove("oono-hide");
     postMessage(ctx, { type: 'resume', storyId: ctx.activeStory });
     ctx.iframeStoriesDiv.style.transform = `scale(1) translate3d(0px, 0px, 0px)`;
+    const body = select$1("html")[0];
+    body.classList.add('oono-overflow-hidden');
   }
 
   const postMessage = (ctx, data) => {

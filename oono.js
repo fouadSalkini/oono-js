@@ -1,5 +1,5 @@
 /*!
- * oono JavaScript Library v1.1.12
+ * oono JavaScript Library v1.1.13
  *
  * Copyright wecansync
  *
@@ -918,7 +918,7 @@
   }
 
   const postMessage = (ctx, data) => {
-    data.tenant = ctx.options.tenantId;
+    data.tenant = ctx.options.subdomain;
     ctx.iframe.contentWindow.postMessage(data, `${ctx.options.iframeURL}`);
   }
 
